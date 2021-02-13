@@ -2,6 +2,8 @@ import tensorflow as tf
 import tensorflow.keras as keras
 
 kl = keras.layers
+ka = keras.activations
+kr = keras.regularizers
 
 # pre-definiamo un paio di sequenze di blocchi comuni nel modello
 def B_R(input):
@@ -10,7 +12,7 @@ def B_R(input):
     return step2
 def B_R_A(input):
     step2 = B_R(input)
-    step3 = kl.AveragePooling2D(pool_size(2,2), strides=(2,2))(step2)
+    step3 = kl.AveragePooling2D(pool_size=(2,2), strides=(2,2))(step2)
     return step3
 
 # definiamo lo squeeze-and-excitation block
@@ -22,7 +24,7 @@ def SE_block(input, squeeze_factor=2):
     # excitation
     exc_step1 = kl.Dense(channels//squeeze_factor)(sqz)
     exc_step2 = kl.ReLU()(exc_step1)
-    exc_step3 = kl.Dense(channels, activation=sigmoid)(exc_step2)
+    exc_step3 = kl.Dense(channels, activation=ka.sigmoid)(exc_step2)
     exc_step4 = kl.multiply([exc_step3, input])
     return exc_step4
 def SE_block_maybe(input, use_SE, squeeze_factor=2):
@@ -80,9 +82,50 @@ def plain_model(
     else:
         flattened = kl.Reshape((-1,))(block5)
     
-    model = keras.Model(input=input_layer, output=[flattened])
+    model = keras.Model(inputs=input_layer, outputs=[flattened])
 
     return model
 
-def __???__(...)   #build_net
-    TODO
+def full_context_model(
+    # parametri per il plain model
+    input_width=64, 
+    input_height=64, 
+    input_channels=3, 
+    normalize=True, 
+    use_SE=True,
+    use_actual_flatten=True,
+    # unità della penultima layer
+    bottleneck_dim=12
+):
+    shared_base_model = plain_model(
+        input_width, input_height, input_channels, 
+        normalize, use_SE, use_actual_flatten
+    )
+
+    in1 = kl.Input(shape=(input_width, input_height, input_channels))
+    in2 = kl.Input(shape=(input_width, input_height, input_channels))
+    in3 = kl.Input(shape=(input_width, input_height, input_channels))
+
+    feat1 = shared_base_model(in1)
+    feat2 = shared_base_model(in2)
+    feat3 = shared_base_model(in3)
+
+    concatenated_feat = kl.Concatenate(axis=-1)([feat1, feat2, feat3])
+
+    distribution_feat = kl.Dense(
+        bottleneck_dim, 
+        activity_regularizer = kr.l1(0),
+        activation = ka.softmax,
+        name="W1"
+    )(concatenated_feat)
+
+    age = kl.Dense(1, name="W2")(distribution_feat)
+
+    model = keras.Model(inputs=[in1, in2, in3], outputs=[age, distribution_feat])
+
+    return model
+
+if __name__=="__main__":
+    print("Hai evocato il test della morte")
+    model = full_context_model()
+    print(model.summary())
