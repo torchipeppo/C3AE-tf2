@@ -46,8 +46,8 @@ def fixed_squares(image):
     assert width<=height, "sei sicuro che sia una faccia?"
     # posizioniamo i quadrati un po' sopra il punto di mezzo
     square_middle = (
-        int(width/2), 
-        int(height/2 - (height-width)/4)
+        int(height/2 - (height-width)/4),
+        int(width/2)
     )
     side0 = width   # dove "side" vuol dire "lato del quadrato"
     side1 = int(0.8*side0)
@@ -99,7 +99,7 @@ def process_fgnet(dataset_dir, overwrite=False):
     name = "fgnet"
 
     # controllo file esistente
-    if file_search_in_folder(name, path_constants.FGNET_OUTPUT) and not overwrite:
+    if file_search_in_folder(name, path_constants.FGNET_PICKLE) and not overwrite:
         print("Un file chiamato "+name+" esiste già")
         return
 
@@ -122,7 +122,7 @@ def process_fgnet(dataset_dir, overwrite=False):
 
     save_dataset(
         true_dataset,
-        path_constants.FGNET_OUTPUT,
+        path_constants.FGNET_PICKLE,
         name
     )
 

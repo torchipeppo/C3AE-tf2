@@ -121,7 +121,7 @@ def full_context_model(
         name="W1"
     )(concatenated_feat)
 
-    age = kl.Dense(1, name="W2")(distribution_feat)
+    age = kl.Dense(1, name="age")(distribution_feat)
 
     model = keras.Model(inputs=[in1, in2, in3], outputs=[age, distribution_feat])
 
