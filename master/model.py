@@ -39,8 +39,10 @@ def normalize_to_minusone_plusone(input):
 # Costruisce il modello plain, comune ai tre tagli dell'immagine
 def plain_model(
     # dimensioni dell'input, lasciate parametriche ma coi valori di default del paper
-    input_width=64, 
+    # height == numero di righe
     input_height=64, 
+    # width == numero di colonne
+    input_width=64, 
     input_channels=3, 
     # decide portare le immagini in [-1,1] o tenerle in [0,255]
     # lasciato parametrico per avere l'eventuale possibilità di fare test comparativi
@@ -51,7 +53,7 @@ def plain_model(
     # decide in che modo appiattire l'input alla fine del modello
     use_actual_flatten=True
 ):
-    input_layer = kl.Input(shape=(input_width, input_height, input_channels))
+    input_layer = kl.Input(shape=(input_height, input_width, input_channels))
 
     # nome non proprio ortodosso per indicare l'input forse-normalizzato
     block0 = input_layer
@@ -88,8 +90,8 @@ def plain_model(
 
 def full_context_model(
     # parametri per il plain model
-    input_width=64, 
     input_height=64, 
+    input_width=64, 
     input_channels=3, 
     normalize=True, 
     use_SE=True,
@@ -98,13 +100,13 @@ def full_context_model(
     bottleneck_dim=12
 ):
     shared_base_model = plain_model(
-        input_width, input_height, input_channels, 
+        input_height, input_width, input_channels, 
         normalize, use_SE, use_actual_flatten
     )
 
-    in1 = kl.Input(shape=(input_width, input_height, input_channels))
-    in2 = kl.Input(shape=(input_width, input_height, input_channels))
-    in3 = kl.Input(shape=(input_width, input_height, input_channels))
+    in1 = kl.Input(shape=(input_height, input_width, input_channels))
+    in2 = kl.Input(shape=(input_height, input_width, input_channels))
+    in3 = kl.Input(shape=(input_height, input_width, input_channels))
 
     feat1 = shared_base_model(in1)
     feat2 = shared_base_model(in2)
