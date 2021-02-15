@@ -5,14 +5,15 @@ import model as model_module
 import tensorflow.keras as keras
 import os
 import path_constants
-import datetime
+from datetime import datetime
 import pickle
 import math
+import cv2
 from dataprocessing import COLS
 
 def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64)):
     index, row = row_with_index[0], row_with_index[1]
-    image = np.fromstring(row.image, np.uint8)
+    image = np.frombuffer(row.image, np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
     if augment:
@@ -20,8 +21,8 @@ def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64)):
 
     crops = []
     for box in np.loads(row.crop_boxes, encoding="bytes"):
-        h0, w0 = box[0]
-        h1, w1 = box[1]
+        h0, w0 = np.int64(box[0])   # conversione np da float a int
+        h1, w1 = np.int64(box[1])
         crops.append(cv2.resize(image[h0:h1,w0:w1], nn_input_shape))
     
     if augment:
@@ -39,9 +40,9 @@ def age2twopoint(age, categories, interval):
     if right_index<categories:
         twopoint_vector[right_index] = right_prob
     
-    return np.array[twopoint_vector]
+    return np.array(twopoint_vector)
 
-def datagen(dataframe, batch_size, categories, interval, augment):
+def datagen(dataframe, batch_size, seed, categories, interval, augment):
     dataframe = dataframe.reset_index(drop=True)
     df_len = len(dataframe)
     while True:
@@ -50,7 +51,7 @@ def datagen(dataframe, batch_size, categories, interval, augment):
         start = 0
         while start+batch_size < df_len:
             index_batch = list(permutated_indices[start : start+batch_size])
-            row_batch = dataframe.ix[index_batch]
+            row_batch = dataframe.iloc[index_batch]
             image_batch = np.array([
                 get_image_crops(rwi, seed, augment) for rwi in row_batch.iterrows()
             ])
@@ -70,7 +71,7 @@ def do_train(
     loss_weight_factor=10,
     seed=14383421,
     bins=10,
-    epochs=250
+    epochs=1   # 250
 ):
     categories = bins+2
     interval = int(math.ceil(100.0/bins))
@@ -78,8 +79,8 @@ def do_train(
     trainset, validset = train_test_split(
         dataset, train_size=train_split
     )
-    train_gen = datagen(trainset, batch_size, categories, interval, True)
-    valid_gen = datagen(validset, batch_size, categories, interval, False)
+    train_gen = datagen(trainset, batch_size, seed, categories, interval, True)
+    valid_gen = datagen(validset, batch_size, seed, categories, interval, False)
 
     model = model_module.full_context_model(bottleneck_dim=categories)
 
@@ -95,12 +96,12 @@ def do_train(
     history = model.fit_generator(
         train_gen,
         steps_per_epoch = len(trainset)/batch_size,
-        epochs=250,
+        epochs=1,   # 250
         validation_data=valid_gen,
         validation_steps = len(validset)/batch_size*3
     )
 
-    now = datetime.date.now()
+    now = datetime.now()
     model_fname = "model_{}_{}_{}_{}_{}_{}.h5".format(
         now.year,
         now.month,
