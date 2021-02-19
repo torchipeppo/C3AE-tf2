@@ -10,6 +10,7 @@ import pickle
 import math
 import cv2
 from dataprocessing import COLS
+import tensorflow as tf
 
 def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64)):
     index, row = row_with_index[0], row_with_index[1]
@@ -20,7 +21,7 @@ def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64)):
         pass   # TODO random erasing qui
 
     crops = []
-    for box in np.loads(row.crop_boxes, encoding="bytes"):
+    for box in pickle.loads(row.crop_boxes, encoding="bytes"):  # invece di np.loads
         h0, w0 = np.int64(box[0])   # conversione np da float a int
         h1, w1 = np.int64(box[1])
         crops.append(cv2.resize(image[h0:h1,w0:w1], nn_input_shape))
@@ -71,7 +72,7 @@ def do_train(
     loss_weight_factor=10,
     seed=14383421,
     bins=10,
-    epochs=1   # 250
+    epochs=10   # 250
 ):
     categories = bins+2
     interval = int(math.ceil(100.0/bins))
@@ -93,16 +94,16 @@ def do_train(
         loss_weights=[1,loss_weight_factor]
     )
 
-    history = model.fit_generator(
+    history = model.fit(    # anziché fit_generator
         train_gen,
         steps_per_epoch = len(trainset)/batch_size,
-        epochs=1,   # 250
+        epochs=10,   # 250
         validation_data=valid_gen,
         validation_steps = len(validset)/batch_size*3
     )
 
     now = datetime.now()
-    model_fname = "model_{}_{}_{}_{}_{}_{}.h5".format(
+    model_fname = "model_{:04d}_{:02d}_{:02d}_{:02d}_{:02d}_{:02d}.h5".format(
         now.year,
         now.month,
         now.day,
@@ -112,7 +113,7 @@ def do_train(
     )
     model_path = os.path.join(path_constants.MODEL_HISTORY_SAVE, model_fname)
     model.save(model_path)
-    history_fname = "history_{}_{}_{}_{}_{}_{}.hist".format(
+    history_fname = "history_{:04d}_{:02d}_{:02d}_{:02d}_{:02d}_{:02d}.hist".format(
         now.year,
         now.month,
         now.day,
@@ -125,6 +126,15 @@ def do_train(
         pickle.dump(history.history, f)
 
 if __name__=="__main__":
+
+    #senza questa riga non sembra funzionare: da approfondire
+    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'    
+
+    if tf.test.gpu_device_name(): 
+        print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
+    else:
+        print("TF will be used with CPU")
+
     files = os.listdir(path_constants.FGNET_PICKLE)
     frames=[]
     for fname in files:
