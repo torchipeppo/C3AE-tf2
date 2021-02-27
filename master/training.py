@@ -4,32 +4,15 @@ from sklearn.model_selection import train_test_split
 import model as model_module
 import tensorflow.keras as keras
 import os
-import path_constants
 from datetime import datetime
 import pickle
 import math
-import cv2
 from dataprocessing import COLS
 import tensorflow as tf
+import random
 
-def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64)):
-    index, row = row_with_index[0], row_with_index[1]
-    image = np.frombuffer(row.image, np.uint8)
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
-    if augment:
-        pass   # TODO random erasing qui
-
-    crops = []
-    for box in pickle.loads(row.crop_boxes, encoding="bytes"):  # invece di np.loads
-        h0, w0 = np.int64(box[0])   # conversione np da float a int
-        h1, w1 = np.int64(box[1])
-        crops.append(cv2.resize(image[h0:h1,w0:w1], nn_input_shape))
-    
-    if augment:
-        pass   # TODO altra augmentation qui
-
-    return crops
+import path_constants
+import image_manipulation
 
 def age2twopoint(age, categories, interval):
     twopoint_vector = [0 for x in range(categories)]
@@ -54,7 +37,7 @@ def datagen(dataframe, batch_size, seed, categories, interval, augment):
             index_batch = list(permutated_indices[start : start+batch_size])
             row_batch = dataframe.iloc[index_batch]
             image_batch = np.array([
-                get_image_crops(rwi, seed, augment) for rwi in row_batch.iterrows()
+                image_manipulation.get_image_crops(rwi, seed, augment) for rwi in row_batch.iterrows()
             ])
             age_array = row_batch.age.to_numpy()
             values = [
@@ -74,6 +57,11 @@ def do_train(
     bins=10,
     epochs=10   # 250
 ):
+
+    random.seed(seed)
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
+
     categories = bins+2
     interval = int(math.ceil(100.0/bins))
 
@@ -97,7 +85,7 @@ def do_train(
     history = model.fit(    # anziché fit_generator
         train_gen,
         steps_per_epoch = len(trainset)/batch_size,
-        epochs=10,   # 250
+        epochs=epochs,   # 250
         validation_data=valid_gen,
         validation_steps = len(validset)/batch_size*3
     )
@@ -125,8 +113,7 @@ def do_train(
     with open(history_path, "wb") as f:
         pickle.dump(history.history, f)
 
-if __name__=="__main__":
-
+def train_main(dataset_pickle_path, epochs):
     #senza questa riga non sembra funzionare: da approfondire
     os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'    
 
@@ -135,16 +122,16 @@ if __name__=="__main__":
     else:
         print("TF will be used with CPU")
 
-    files = os.listdir(path_constants.FGNET_PICKLE)
+    files = os.listdir(dataset_pickle_path)
     frames=[]
     for fname in files:
-        path = os.path.join(path_constants.FGNET_PICKLE, fname)
+        path = os.path.join(dataset_pickle_path, fname)
         frame = pd.read_pickle(path)
         frames.append(frame)
     dataset = pd.concat(list(frames), ignore_index=True)
     # filtriamo le età che non hanno senso
-    dataset = dataset[(dataset.age>=0) & (dataset.age<=120)]
+    dataset = dataset[(dataset.age>=0) & (dataset.age<120)]
     dataset = dataset.dropna()
 
-    do_train(dataset)
+    do_train(dataset, epochs=epochs)
     

@@ -164,7 +164,7 @@ def process_wiki(dataset_dir, with_metadata, overwrite=False):
                 ages.append(age)
                 path = os.path.abspath(os.path.join(root, fname))
                 paths.append(path)
-        print(ages)
+        #print(ages)
             
     early_dataset = pd.DataFrame({PATH_COL: paths, AGE_COL: ages})
 
