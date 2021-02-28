@@ -3,7 +3,7 @@ import cv2
 import pickle
 import random
 
-import path_constants
+from utils import path_constants
 
 def random_erasing(image, area_ratio_bounds=(0.06,0.10), aspect_ratio_bounds=(0.5,2)):
     # copiamo l'immagine e recuperiamo le dimensioni
@@ -54,7 +54,7 @@ def do_some_augmentation(
     return image
 
 def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64), padding=250, erasing_probability=0.3):
-    index, row = row_with_index[0], row_with_index[1]
+    __index, row = row_with_index[0], row_with_index[1]
     image = np.frombuffer(row.image, np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 

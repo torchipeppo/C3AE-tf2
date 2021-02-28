@@ -11,7 +11,7 @@ from dataprocessing import COLS
 import tensorflow as tf
 import random
 
-import path_constants
+from utils import path_constants
 import image_manipulation
 
 def age2twopoint(age, categories, interval):
@@ -125,6 +125,7 @@ def train_main(dataset_pickle_path, epochs):
     files = os.listdir(dataset_pickle_path)
     frames=[]
     for fname in files:
+        if ".pkl" not in fname: continue   # skippa ciò che non è un pickle
         path = os.path.join(dataset_pickle_path, fname)
         frame = pd.read_pickle(path)
         frames.append(frame)

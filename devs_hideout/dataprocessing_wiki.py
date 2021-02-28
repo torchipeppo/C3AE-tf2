@@ -13,7 +13,7 @@ import re
 import os
 from datetime import datetime
 import scipy.io
-import path_constants
+from utils import path_constants
 
 import sys
 sys.path.append(path_constants.REPO_ROOT)
@@ -116,7 +116,7 @@ def file_search_in_folder(name, dir):
             return True
     return False
 
-def process_wiki(dataset_dir, with_metadata, overwrite=False):
+def process_wiki(dataset_dir, overwrite=False):
     name = "wiki"
     # controllo file esistente
     if file_search_in_folder(name, path_constants.WIKI_PICKLE) and not overwrite:
@@ -125,46 +125,20 @@ def process_wiki(dataset_dir, with_metadata, overwrite=False):
 
     paths = []
     ages = []
-
-    if(with_metadata):
-        # carico metadati, con le seguenti proprietà:
-        ### dtype=[('dob', 'O'), ('photo_taken', 'O'), ('full_path', 'O'), ('gender', 'O'), ('name', 'O'), 
-        ### ('face_location', 'O'), ('face_score', 'O'), ('second_face_score', 'O')]
-        mat_path = os.path.join(dataset_dir, "wiki.mat")
-        metadata = scipy.io.loadmat(mat_path)
-        #print(metadata)
-
-        for root, __dirs, files in os.walk(dataset_dir):
-            for fname in files:
-                if fname=="wiki.mat": continue # skippo
-                date_of_birth = metadata[name][0, 0]["dob"][0][:-1] # Matlab serial date number
-                photo_year = metadata[name][0, 0]["photo_taken"][0][:-1]
-                # converto date_of_birth in una data e calcolo l'età
-                for i in range(len(date_of_birth)):
-                    dob = datetime.fromordinal(max(int(date_of_birth[i]) - 366, 1))
-                    age = photo_year[i] - dob.year
-                    #print(age)
-                    #assert age>=0, "Hai fotografato un feto?"
-                    ages.append(age)
-
-                path = os.path.abspath(os.path.join(root, fname))
-                paths.append(path)
-        #print(ages)
     
-    else:
-        for root, __dirs, files in os.walk(dataset_dir):
-            for fname in files:
-                if fname=="wiki.mat": continue # skippo
-                found = re.findall(r'[\d]+', fname)
-                assert len(found)>=5, "Error"+fname
-                year_of_birth = int(found[1])
-                year_taken = int(found[-1])
-                age = year_taken - year_of_birth
-                #assert age>=0, "Hai fotografato un feto?"
-                ages.append(age)
-                path = os.path.abspath(os.path.join(root, fname))
-                paths.append(path)
-        #print(ages)
+    for root, __dirs, files in os.walk(dataset_dir):
+        for fname in files:
+            if fname=="wiki.mat": continue # skippo
+            found = re.findall(r'[\d]+', fname)
+            assert len(found)>=5, "Error"+fname
+            year_of_birth = int(found[1])
+            year_taken = int(found[-1])
+            age = year_taken - year_of_birth
+            #assert age>=0, "Hai fotografato un feto?"
+            ages.append(age)
+            path = os.path.abspath(os.path.join(root, fname))
+            paths.append(path)
+    #print(ages)
             
     early_dataset = pd.DataFrame({PATH_COL: paths, AGE_COL: ages})
 
@@ -182,7 +156,7 @@ if __name__=="__main__":
     #os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true' 
 
     with tf.device('/cpu:0'):
-        process_wiki(path_constants.WIKI_IMAGES, with_metadata=False)
+        process_wiki(path_constants.WIKI_IMAGES)
 
 
 
