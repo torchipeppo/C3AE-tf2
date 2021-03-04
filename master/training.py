@@ -1,18 +1,18 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import model as model_module
+from master import model as model_module
 import tensorflow.keras as keras
 import os
 from datetime import datetime
 import pickle
 import math
-from dataprocessing import COLS
+from master.dataprocessing import COLS
 import tensorflow as tf
 import random
 
 from utils import path_constants
-import image_manipulation
+from master import image_manipulation
 
 def age2twopoint(age, categories, interval):
     twopoint_vector = [0 for x in range(categories)]
