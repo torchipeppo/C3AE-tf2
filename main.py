@@ -63,6 +63,12 @@ parser.add_argument(
     help="In -single-prediction, only output the age and do nothing more."
 )
 
+parser.add_argument(
+    '--ablation',
+    action="store_true",
+    help="In -training, start an ablation study that trains many variants of the model."
+)
+
 args = parser.parse_args()
 
 # importiamo i moduli all'ultimo momento per evitare il caricamento di tensorflow se sbagliamo la CLI
@@ -80,7 +86,12 @@ elif args.training!=None:
     epochs = args.epochs
     dataset_pickle_path = DATASET_PICKLE_PATHS[dataset_name]
     from master import training
-    training.train_main(dataset_pickle_path, epochs)
+    training.train_main(dataset_pickle_path, epochs, augment=True)
+    if params.ablation:
+        print()
+        print("#######################################")
+        print()
+        training.train_main(dataset_pickle_path, epochs, augment=False)
 
 elif args.single_prediction!=None:
     image_path = args.single_prediction

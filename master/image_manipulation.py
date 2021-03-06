@@ -52,7 +52,7 @@ def do_some_augmentation(
         image = cv2.flip(image, 1)
     # cambio temperatura
     if np.random.rand() < probability_of_one_transformation:
-        image = random_temperature(img)
+        image = random_temperature(image)
     return image
 
 def box_random_shift(box, relative_shift_bounds=(-0.1, 0.1)):

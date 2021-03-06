@@ -55,7 +55,8 @@ def do_train(
     loss_weight_factor=10,
     seed=14383421,
     bins=10,
-    epochs=10   # 250
+    epochs=10,   # 250
+    augment=True
 ):
 
     random.seed(seed)
@@ -68,7 +69,7 @@ def do_train(
     trainset, validset = train_test_split(
         dataset, train_size=train_split
     )
-    train_gen = datagen(trainset, batch_size, seed, categories, interval, True)
+    train_gen = datagen(trainset, batch_size, seed, categories, interval, augment)
     valid_gen = datagen(validset, batch_size, seed, categories, interval, False)
 
     model = model_module.full_context_model(bottleneck_dim=categories)
@@ -113,7 +114,7 @@ def do_train(
     with open(history_path, "wb") as f:
         pickle.dump(history.history, f)
 
-def train_main(dataset_pickle_path, epochs):
+def train_main(dataset_pickle_path, epochs, augment=True):
     #senza questa riga non sembra funzionare: da approfondire
     os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'    
 
@@ -134,5 +135,5 @@ def train_main(dataset_pickle_path, epochs):
     dataset = dataset[(dataset.age>=0) & (dataset.age<120)]
     dataset = dataset.dropna()
 
-    do_train(dataset, epochs=epochs)
+    do_train(dataset, epochs=epochs, augment=augment)
     
