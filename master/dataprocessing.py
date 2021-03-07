@@ -13,6 +13,7 @@ import re
 import os
 from datetime import datetime
 import scipy.io
+import time
 
 from utils import path_constants
 
@@ -32,10 +33,12 @@ COLS = [IMAGE_COL, AGE_COL, CROP_BOXES_COL]
 MTCNN_DETECT = MTCNN() #min_face_size=50?  (TODO cancellare)
 
 def make_true_dataset(early_dataset):
+    # semplice cronometraggio
+    start_time = time.time()
     # usiamo una funzione ausiliaria per leggere ed elaborare tutte le immagini
     dataset = early_dataset.apply(
         # usiamo questa notazione estesa per renderci più facile aggiungere argomenti alla funzione in futuro
-        lambda row : read_image_and_process(row, MTCNN_DETECT),
+        lambda row : read_image_and_process(row, MTCNN_DETECT, start_time),
         axis=1
     )
 
@@ -94,11 +97,15 @@ def convert_box_ipazc_to_ours(ipazc_box):
         (x+w,y+h)
     ]
 
-def read_image_and_process(row, detector=None):
+def read_image_and_process(row, detector=None, start_time=None):
     # stampa di stato (se possibile)
     if row.name:
-        if row.name%600==1:
-            print(int(row.name)/62000)
+        if row.name%200==1:
+            # print(int(row.name)/62000)
+            s = "Numero... {}".format(row.name)
+            if start_time:
+                s += " ~ Tempo totale: {}".format(time.time()-start_time)
+            print(s, flush=True)
 
     image_path = row.path
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
@@ -179,6 +186,20 @@ def read_early_dataset_wiki(name="wiki"):
             paths.append(path)
     return pd.DataFrame({PATH_COL: paths, AGE_COL: ages})
 
+def read_early_dataset_utk(name="utk"):
+    dataset_dir = path_constants.IMAGES[name]
+    paths = []
+    ages = []
+    for root, __dirs, files in os.walk(dataset_dir):
+        for fname in files:
+            if ".jpg" not in fname: continue
+            m = re.match(r'^([\d]+).*$', fname)
+            age = int(m.group(1))
+            path = os.path.abspath(os.path.join(root, fname))
+            paths.append(path)
+            ages.append(age)
+    return pd.DataFrame({PATH_COL: paths, AGE_COL: ages})
+
 def process_dataset(name, overwrite=False):
     # controllo file esistente
     if file_search_in_folder(name, path_constants.PICKLES[name]) and not overwrite:
@@ -189,6 +210,8 @@ def process_dataset(name, overwrite=False):
         early_dataset = read_early_dataset_fgnet(name)
     elif name=="wiki":
         early_dataset = read_early_dataset_wiki(name)
+    elif name=="utk":
+        early_dataset = read_early_dataset_utk(name)
 
     true_dataset = make_true_dataset(early_dataset)
 
@@ -205,8 +228,7 @@ if __name__=="__main__":
         # process_wiki(path_constants.WIKI_IMAGES)
     
     with tf.device('/cpu:0'):
-        process_dataset("wiki")
-
+        process_dataset("utk")
 
 
 

@@ -97,37 +97,76 @@ def full_context_model(
     use_SE=True,
     use_actual_flatten=True,
     # unità della penultima layer
-    bottleneck_dim=12
+    bottleneck_dim=12,
+    # rimuovono selettivamente le caratteristiche principali del modello
+    ablate_context = False,
+    ablate_cascade = False,
+    # per scegliere un nome
+    name = None
 ):
     shared_base_model = plain_model(
         input_height, input_width, input_channels, 
         normalize, use_SE, use_actual_flatten
     )
 
-    in1 = kl.Input(shape=(input_height, input_width, input_channels))
-    in2 = kl.Input(shape=(input_height, input_width, input_channels))
-    in3 = kl.Input(shape=(input_height, input_width, input_channels))
+    if not ablate_context:
+        # struttura normale: tre input per tre ritagli diversi
+        in1 = kl.Input(shape=(input_height, input_width, input_channels))
+        in2 = kl.Input(shape=(input_height, input_width, input_channels))
+        in3 = kl.Input(shape=(input_height, input_width, input_channels))
 
-    feat1 = shared_base_model(in1)
-    feat2 = shared_base_model(in2)
-    feat3 = shared_base_model(in3)
+        feat1 = shared_base_model(in1)
+        feat2 = shared_base_model(in2)
+        feat3 = shared_base_model(in3)
 
-    concatenated_feat = kl.Concatenate(axis=-1)([feat1, feat2, feat3])
+        concatenated_feat = kl.Concatenate(axis=-1)([feat1, feat2, feat3])
 
-    distribution_feat = kl.Dense(
-        bottleneck_dim, 
-        activity_regularizer = kr.l1(0),
-        activation = ka.softmax,
-        name="W1"
-    )(concatenated_feat)
+        inputs = [in1, in2, in3]
+    else:
+        # struttura modificata: un solo input (il quadrato esterno)
+        in1 = kl.Input(shape=(input_height, input_width, input_channels))
+        concatenated_feat = shared_base_model(in1)
+        inputs = [in1]
 
-    age = kl.Dense(1, name="age")(distribution_feat)
+    if not ablate_cascade:
+        # struttura normale: a cascata con un passo intermedio che è una rappresentazione two-point dell'età
+        distribution_feat = kl.Dense(
+            bottleneck_dim, 
+            activity_regularizer = kr.l1(0),
+            activation = ka.softmax,
+            name="W1"
+        )(concatenated_feat)
 
-    model = keras.Model(inputs=[in1, in2, in3], outputs=[age, distribution_feat])
+        age = kl.Dense(1, name="age")(distribution_feat)
+
+        outputs = [age, distribution_feat]
+    else:
+        # struttura modificata: semplice FFNN con una layer nascosta senza significato particolare
+        hidden = kl.Dense(
+            16, 
+            activity_regularizer = kr.l1(0),
+            activation = ka.softmax
+        )(concatenated_feat)
+
+        age = kl.Dense(1, name="age")(hidden)
+
+        outputs = [age]
+    
+    model = keras.Model(name=name, inputs=inputs, outputs=outputs)
 
     return model
 
 if __name__=="__main__":
-    print("Hai evocato il test della morte")
-    model = full_context_model()
-    print(model.summary())
+    print("Hai evocato il test della morte supremo")
+
+    model_full = full_context_model(name="model_full")
+    print(model_full.summary())
+
+    model_no_context = full_context_model(name="model_no_context", ablate_context=True)
+    print(model_no_context.summary())
+
+    model_no_cascade = full_context_model(name="model_no_cascade", ablate_cascade=True)
+    print(model_no_cascade.summary())
+
+    model_no_nothing = full_context_model(name="model_no_nothing", ablate_context=True, ablate_cascade=True)
+    print(model_no_nothing.summary())

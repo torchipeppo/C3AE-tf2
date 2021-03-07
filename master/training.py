@@ -26,7 +26,7 @@ def age2twopoint(age, categories, interval):
     
     return np.array(twopoint_vector)
 
-def datagen(dataframe, batch_size, seed, categories, interval, augment):
+def datagen(dataframe, batch_size, seed, categories, interval, augment, ablate_context, ablate_cascade):
     dataframe = dataframe.reset_index(drop=True)
     df_len = len(dataframe)
     while True:
@@ -39,12 +39,20 @@ def datagen(dataframe, batch_size, seed, categories, interval, augment):
             image_batch = np.array([
                 image_manipulation.get_image_crops(rwi, seed, augment) for rwi in row_batch.iterrows()
             ])
+            crops_batch_list = [image_batch[:,0], image_batch[:,1], image_batch[:,2]]
+            if ablate_context:
+                # se usiamo un modello senza context, deve prendere una sola immagine come input
+                crops_batch_list = crops_batch_list[0:1]   # questa notazione prende solo il primo elemento, ma dà una lista anziché solo quell'elemento
             age_array = row_batch.age.to_numpy()
             values = [
                 age_array,
                 np.array([age2twopoint(a, categories, interval) for a in age_array])
             ]
-            yield [image_batch[:,0], image_batch[:,1], image_batch[:,2]], values
+            if ablate_cascade:
+                # se usiamo un modello senza cascade, non esiste la rappresentazione two-point,
+                # quindi non dobbiamo dare la groundtruth corrispondente
+                values = values[0:1]   # vedi sopra
+            yield crops_batch_list, values
             start += batch_size
 
 def do_train(
@@ -56,7 +64,9 @@ def do_train(
     seed=14383421,
     bins=10,
     epochs=10,   # 250
-    augment=True
+    augment=True,
+    ablate_context=False,
+    ablate_cascade=False
 ):
 
     random.seed(seed)
@@ -69,16 +79,26 @@ def do_train(
     trainset, validset = train_test_split(
         dataset, train_size=train_split
     )
-    train_gen = datagen(trainset, batch_size, seed, categories, interval, augment)
-    valid_gen = datagen(validset, batch_size, seed, categories, interval, False)
+    train_gen = datagen(trainset, batch_size, seed, categories, interval, augment, ablate_context, ablate_cascade)
+    valid_gen = datagen(validset, batch_size, seed, categories, interval, False, ablate_context, ablate_cascade)
 
-    model = model_module.full_context_model(bottleneck_dim=categories)
+    model = model_module.full_context_model(
+        bottleneck_dim=categories,
+        ablate_context=ablate_context,
+        ablate_cascade=ablate_cascade
+    )
 
     opti = keras.optimizers.Adam(lr=lr)
 
+    losses = ["mae", "kullback_leibler_divergence"]
+    if ablate_cascade:
+        # se usiamo un modello senza cascade, non esiste la rappresentazione two-point,
+        # quindi non dobbiamo considerare la perdita
+        losses = losses[0:1]   # questa notazione prende solo il primo elemento, ma dà una lista anziché solo quell'elemento
+
     model.compile(
         optimizer=opti,
-        loss=["mae", "kullback_leibler_divergence"],
+        loss=losses,
         metrics={"age":"mae"},
         loss_weights=[1,loss_weight_factor]
     )
@@ -114,7 +134,7 @@ def do_train(
     with open(history_path, "wb") as f:
         pickle.dump(history.history, f)
 
-def train_main(dataset_pickle_path, epochs, augment=True):
+def train_main(dataset_pickle_path, epochs, ablation):
     #senza questa riga non sembra funzionare: da approfondire
     os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'    
 
@@ -135,5 +155,24 @@ def train_main(dataset_pickle_path, epochs, augment=True):
     dataset = dataset[(dataset.age>=0) & (dataset.age<120)]
     dataset = dataset.dropna()
 
-    do_train(dataset, epochs=epochs, augment=augment)
-    
+    print()
+    print("################ Normal ###################")
+    print()
+    do_train(dataset, epochs=epochs)
+    if ablation:
+        print()
+        print("################ No Augmentation ###################")
+        print()
+        do_train(dataset, epochs=epochs, augment=False)
+        print()
+        print("################# No Context ###################")
+        print()
+        do_train(dataset, epochs=epochs, augment=True, ablate_context=True)
+        print()
+        print("#################### No Cascade ##############")
+        print()
+        do_train(dataset, epochs=epochs, augment=True, ablate_cascade=True)
+        print()
+        print("############### Full Ablation ###############")
+        print()
+        do_train(dataset, epochs=epochs, augment=True, ablate_context=True, ablate_cascade=True)

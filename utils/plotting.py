@@ -11,11 +11,11 @@ def plot_loss(history, name=""):
     plt.legend(['train', 'validation'], loc='upper right')
     plt.show()
 
-def plot_context_KL_divergence(history, name=""):
+def plot_cascade_KLD(history, name=""):
     plt.plot(history['W1_loss'])
     plt.plot(history['val_W1_loss'])
-    plt.title('{} context KL Divergence'.format(name))
-    plt.ylabel('context KL Divergence')
+    plt.title('{} cascade KL Divergence'.format(name))
+    plt.ylabel('cascade KL Divergence')
     plt.xlabel('epoch')
     plt.legend(['train', 'validation'], loc='upper right')
     plt.show()
@@ -32,8 +32,8 @@ def plot_mae(history, name=""):
 import path_constants
 
 if __name__=="__main__":
-    with open(os.path.join(path_constants.MODEL_HISTORY_SAVE, "history_wiki_400_epochs.hist"), "rb") as f:
+    with open(os.path.join(path_constants.MODEL_HISTORY_SAVE, "history_wiki_100epochs_fullmodel_augmentation.hist"), "rb") as f:
         history = pickle.load(f)
     plot_loss(history)
-    plot_context_KL_divergence(history)
+    plot_cascade_KLD(history)
     plot_mae(history)

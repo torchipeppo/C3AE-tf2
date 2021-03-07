@@ -6,6 +6,7 @@ from utils import path_constants
 DATASET_PICKLE_PATHS = {
     "FGNET": path_constants.FGNET_PICKLE,
     "WIKI": path_constants.WIKI_PICKLE,
+    "UTK": path_constants.UTK_PICKLE,
 }
 
 parser = argparse.ArgumentParser(
@@ -79,21 +80,21 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 if args.dataprocessing!=None:
     name = args.dataprocessing.lower()
     print(name)
-    raise NotImplementedError("TODO, per ora lancia direttamente dataprocessing.py")
+    #raise NotImplementedError("TODO, per ora lancia direttamente dataprocessing.py")
+    from master import dataprocessing
+    import tensorflow as tf
+    with tf.device('/cpu:0'):
+        dataprocessing.process_dataset(name)
 
 elif args.training!=None:
     dataset_name = args.training.upper()
     epochs = args.epochs
     dataset_pickle_path = DATASET_PICKLE_PATHS[dataset_name]
     from master import training
-    training.train_main(dataset_pickle_path, epochs, augment=True)
-    if params.ablation:
-        print()
-        print("#######################################")
-        print()
-        training.train_main(dataset_pickle_path, epochs, augment=False)
+    training.train_main(dataset_pickle_path, epochs, args.ablation)
 
 elif args.single_prediction!=None:
     image_path = args.single_prediction
     from tests import single_prediction
-    single_prediction.sp_main(image_path, args.model, args.silent)
+    #single_prediction.sp_main(image_path, args.model, args.silent)
+    single_prediction.sp_main(image_path)
