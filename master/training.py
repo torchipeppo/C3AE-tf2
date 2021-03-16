@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from master import model as model_module
 import tensorflow.keras as keras
+import cv2
 import os
 from datetime import datetime
 import pickle
@@ -58,7 +59,7 @@ def datagen(dataframe, batch_size, seed, categories, interval, augment, ablate_c
 def do_train(
     dataset, 
     train_split=0.888, 
-    batch_size=50, 
+    batch_size=50,
     lr=0.002,
     loss_weight_factor=10,
     seed=14383421,
@@ -66,7 +67,8 @@ def do_train(
     epochs=10,   # 250
     augment=True,
     ablate_context=False,
-    ablate_cascade=False
+    ablate_cascade=False,
+    pretrained_model_path=None
 ):
 
     random.seed(seed)
@@ -82,11 +84,16 @@ def do_train(
     train_gen = datagen(trainset, batch_size, seed, categories, interval, augment, ablate_context, ablate_cascade)
     valid_gen = datagen(validset, batch_size, seed, categories, interval, False, ablate_context, ablate_cascade)
 
-    model = model_module.full_context_model(
-        bottleneck_dim=categories,
-        ablate_context=ablate_context,
-        ablate_cascade=ablate_cascade
-    )
+    if not pretrained_model_path:
+        # se non specifichiamo un modello pretrainato, creiamo il modello da zero
+        model = model_module.full_context_model(
+            bottleneck_dim=categories,
+            ablate_context=ablate_context,
+            ablate_cascade=ablate_cascade
+        )
+    else:
+        # altrimenti carichiamo il modello pretrainato
+        model = keras.models.load_model(pretrained_model_path, custom_objects={'tf': tf})
 
     opti = keras.optimizers.Adam(lr=lr)
 
@@ -134,7 +141,7 @@ def do_train(
     with open(history_path, "wb") as f:
         pickle.dump(history.history, f)
 
-def train_main(dataset_pickle_path, epochs, ablation):
+def train_main(dataset_pickle_path, epochs, ablation, pretrained_model_path):
     #senza questa riga non sembra funzionare: da approfondire
     os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'    
 
@@ -155,10 +162,12 @@ def train_main(dataset_pickle_path, epochs, ablation):
     dataset = dataset[(dataset.age>=0) & (dataset.age<120)]
     dataset = dataset.dropna()
 
+    print(f"Caricato dataset da {dataset.shape[0]} immagini")
+
     print()
     print("################ Normal ###################")
     print()
-    do_train(dataset, epochs=epochs)
+    do_train(dataset, epochs=epochs, pretrained_model_path=pretrained_model_path)
     if ablation:
         print()
         print("################ No Augmentation ###################")
@@ -176,3 +185,4 @@ def train_main(dataset_pickle_path, epochs, ablation):
         print("############### Full Ablation ###############")
         print()
         do_train(dataset, epochs=epochs, augment=True, ablate_context=True, ablate_cascade=True)
+        pass   # TMCH per quando l'if è tutto commentato

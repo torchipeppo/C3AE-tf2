@@ -67,7 +67,36 @@ def box_random_shift(box, relative_shift_bounds=(-0.1, 0.1)):
         (box[1][0]+shift_vert, box[1][1]+shift_horiz)
     ]
 
-def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64), padding=250, erasing_probability=0.3, other_transf_prob_each=0.5):
+def clip_box(box, image):
+    shift_vert=0
+    shift_horiz=0
+    box_shape = (
+        np.abs(box[0][0] - box[1][0]),
+        np.abs(box[0][1] - box[1][1])
+    )
+    img_shape = image.shape
+    assert box_shape[0]<=img_shape[0] and box_shape[1]<=img_shape[1], "box più grande di immagine+padding, resize fallirebbe 100%"
+
+    # se la box va troppo in alto
+    if box[0][0] < 0:   # indice di riga dell'angolo top-left
+        shift_vert = -box[0][0]
+    # se va troppo in basso
+    elif box[1][0] >= img_shape[0]:   # indice di riga dell'angolo bot-right
+        shift_vert = img_shape[0] - box[1][0]
+
+    # se va troppo a sinistra
+    if box[0][1] < 0:   # indice di colonna dell'angolo top-left
+        shift_horiz = -box[0][1]
+    # se va troppo a destra
+    elif box[1][1] >= img_shape[1]:   # indice di colonna dell'angolo bot-right
+        shift_horiz = img_shape[1] - box[1][1]
+
+    return [
+        (box[0][0]+shift_vert, box[0][1]+shift_horiz),
+        (box[1][0]+shift_vert, box[1][1]+shift_horiz)
+    ]
+
+def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64), padding=250, erasing_probability=0.3, other_transf_prob_each=0.5):  # TODO(?) dizionario padding: (wiki=250), (utk=585)
     __index, row = row_with_index[0], row_with_index[1]
     image = np.frombuffer(row.image, np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
@@ -85,6 +114,7 @@ def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64), paddi
         if augment:
             if np.random.rand() < other_transf_prob_each:
                 box = box_random_shift(box)
+                box = clip_box(box, padded_image)
         h0, w0 = np.int64(box[0])   # conversione np da float a int
         h1, w1 = np.int64(box[1])
         crops.append(cv2.resize(padded_image[h0+padding:h1+padding, w0+padding:w1+padding, :], nn_input_shape))

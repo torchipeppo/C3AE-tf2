@@ -1,11 +1,11 @@
-FGNET_IMAGES = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\dataset\FGNET\FGNET\images"
-FGNET_PICKLE = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\dataset\FGNET\processed"
+FGNET_IMAGES = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\datasets\FGNET\FGNET\images"
+FGNET_PICKLE = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\datasets\FGNET\processed"
 
-WIKI_IMAGES = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\dataset\wiki_crop"
-WIKI_PICKLE = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\dataset\wiki_crop\processed"
+WIKI_IMAGES = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\datasets\wiki_crop"
+WIKI_PICKLE = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\datasest\wiki_crop\processed"
 
-UTK_IMAGES = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\dataset\UTKFace\in_the_wild\images"
-UTK_PICKLE = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\dataset\UTKFace\in_the_wild\processed"
+UTK_IMAGES = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\datasets\UTKFace\in_the_wild\images"
+UTK_PICKLE = r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\datasets\UTKFace\in_the_wild\processed"
 
 PICKLES = {
     "fgnet": FGNET_PICKLE,

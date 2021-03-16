@@ -13,7 +13,7 @@ MTCNN = mtcnn.mtcnn.MTCNN
 
 MTCNN_DETECT = MTCNN() #min_face_size=50?  (TODO cancellare)
 
-def sp_main(image_path, model_fname, silent=False, seed=14383421):
+def sp_main(image_path, model_path, silent=False, seed=14383421):
     # possiamo riutilizzare le funzioni scritte in precedenza,
     # ma dovremo fare delle mosse aggiuntive per adattarci
     # alla loro interfaccia
@@ -29,7 +29,7 @@ def sp_main(image_path, model_fname, silent=False, seed=14383421):
     three_inputs = [pseudo_batch[:,0], pseudo_batch[:,1], pseudo_batch[:,2]]
 
     # carichiamo il modello
-    model = keras.models.load_model(os.path.join(path_constants.MODEL_HISTORY_SAVE, model_fname), custom_objects={'tf': tf})
+    model = keras.models.load_model(model_path, custom_objects={'tf': tf})
 
     # invochiamo il modello per avere la predizione
     results_pseudo_batches = model(three_inputs)

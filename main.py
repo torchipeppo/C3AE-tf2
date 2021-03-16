@@ -1,5 +1,10 @@
 import argparse
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+# 0 = all messages are logged (default behavior)
+# 1 = INFO messages are not printed
+# 2 = INFO and WARNING messages are not printed
+# 3 = INFO, WARNING, and ERROR messages are not printed
 
 from utils import path_constants
 
@@ -9,20 +14,16 @@ DATASET_PICKLE_PATHS = {
     "UTK": path_constants.UTK_PICKLE,
 }
 
+def search_model_file(model_fname):
+    for root, __dirs, files in os.walk(path_constants.MODEL_HISTORY_SAVE):
+        for fname in files:
+            if fname==model_fname:
+                return os.path.join(root, fname)
+
 parser = argparse.ArgumentParser(
     description="NN Project: re-implementation of C3AE", 
     epilog="Reference PaperWithCode: https://paperswithcode.com/paper/c3ae-exploring-the-limits-of-compact-model"
 )
-
-'''
-parser.add_argument(
-    "mode",
-    help="Select a module to launch. "
-         "Possible choices right now are dataprocessing, training and single_prediction, "
-         "but check the source code to be sure",
-    choices=['dataprocessing', 'training', 'single_prediction']
-)
-'''
 
 parser.add_argument(
     "-dataprocessing",
@@ -41,6 +42,12 @@ parser.add_argument(
 parser.add_argument(
     "-single-prediction",
     help="Predict the age of one person by providing the path of a photo. "
+         "Also specify the -m argument."
+)
+
+parser.add_argument(
+    "-use-test-set",
+    help="Use the given dataset as a test set for a trained model. "
          "Also specify the -m argument."
 )
 
@@ -79,22 +86,31 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 if args.dataprocessing!=None:
     name = args.dataprocessing.lower()
-    print(name)
-    #raise NotImplementedError("TODO, per ora lancia direttamente dataprocessing.py")
     from master import dataprocessing
     import tensorflow as tf
-    with tf.device('/cpu:0'):
+    with tf.device('/gpu:0'):   # or '/cpu:0'
         dataprocessing.process_dataset(name)
 
 elif args.training!=None:
     dataset_name = args.training.upper()
     epochs = args.epochs
     dataset_pickle_path = DATASET_PICKLE_PATHS[dataset_name]
+    if args.model:
+        model_path = search_model_file(args.model)
+    else:
+        model_path=None
     from master import training
-    training.train_main(dataset_pickle_path, epochs, args.ablation)
+    training.train_main(dataset_pickle_path, epochs, args.ablation, model_path)
 
 elif args.single_prediction!=None:
     image_path = args.single_prediction
+    model_path = search_model_file(args.model)
     from tests import single_prediction
-    #single_prediction.sp_main(image_path, args.model, args.silent)
-    single_prediction.sp_main(image_path)
+    single_prediction.sp_main(image_path, model_path, args.silent)
+
+elif args.use_test_set!=None:
+    dataset_name = args.use_test_set.upper()
+    dataset_pickle_path = DATASET_PICKLE_PATHS[dataset_name]
+    model_path = search_model_file(args.model)
+    from tests import use_test_set
+    use_test_set.test_main(dataset_pickle_path, model_path)
