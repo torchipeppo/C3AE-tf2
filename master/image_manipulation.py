@@ -75,7 +75,19 @@ def clip_box(box, image):
         np.abs(box[0][1] - box[1][1])
     )
     img_shape = image.shape
-    assert box_shape[0]<=img_shape[0] and box_shape[1]<=img_shape[1], "box più grande di immagine+padding, resize fallirebbe 100%"
+
+    #log
+    #if box_shape[0]>img_shape[0] or box_shape[1]>img_shape[1]:
+        #print("\n\n")
+        #print("FALLIMENTO")
+        #print("box_shape[0] =", int(box_shape[0]))
+        #print("img_shape[0] =", int(img_shape[0]))
+        #print("box_shape[1] =", int(box_shape[1]))
+        #print("img_shape[1] =", int(img_shape[1]))
+        #print("\n\n")
+        #cv2.imwrite(r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\errore_box_{}.jpg".format(contaerrori), image)
+
+    #assert box_shape[0]<=img_shape[0] and box_shape[1]<=img_shape[1], "box più grande di immagine+padding, resize fallirebbe 100%"
 
     # se la box va troppo in alto
     if box[0][0] < 0:   # indice di riga dell'angolo top-left
@@ -96,7 +108,7 @@ def clip_box(box, image):
         (box[1][0]+shift_vert, box[1][1]+shift_horiz)
     ]
 
-def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64), padding=250, erasing_probability=0.3, other_transf_prob_each=0.5):  # TODO(?) dizionario padding: (wiki=250), (utk=585)
+def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64), padding=585, erasing_probability=0.3, other_transf_prob_each=0.5):  # TODO(?) dizionario padding: (wiki=250), (utk=585)
     __index, row = row_with_index[0], row_with_index[1]
     image = np.frombuffer(row.image, np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)

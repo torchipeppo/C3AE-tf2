@@ -79,8 +79,8 @@ def test_main(dataset_pickle_path, model_path):
     preds, gts = do_test(dataset, model_path)
 
     mae = sklearn.metrics.mean_absolute_error(gts[0], preds[0])
-    print(mae)
+    print("mae =",mae)
 
     kl_loss = keras.losses.KLDivergence()
     kld = kl_loss(gts[1], preds[1]).numpy()
-    print(kld)
+    print("kld =",kld)
