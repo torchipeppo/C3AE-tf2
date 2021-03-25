@@ -1,3 +1,11 @@
 .ipynb_checkpoints
 path_constants.py
 __pycache__
+
+report/*.aux
+report/*.fdb_latexmk
+report/*.fls
+report/*.log
+report/*.synctex.gz
+report/*.out
+report/*.toc
