@@ -1,0 +1,31 @@
+%!TEX root = report.tex
+
+\chapter{Introduction}
+In the past decade ((years?)) soft biometrics has emerged out to be a new area of interest for the researchers due to its growing real-world 
+applications. This includes a classic learning problem in computer vision: the estimation of demographic traits, such as the age. 
+Researchers are trying to develop models which can accurately estimate the age or the age group of a person using different 
+biometric traits. Currently, neural networks give the best classification results for age estimation using human faces.
+Many CNNs (convolutional neural networks) such as AlexNet, VggNet, GoogLeNet and ResNet ((citations needed?)) are able to accomplish this task with promising 
+performance.\\
+However, to obtain more precise accuracy these networks have grown deeper and larger. This trend has resulted in increasingly higher 
+computational costs in either training or deploying. In particular, deploying the previously mentioned models on mobile phones, cars and 
+robots is next to impossible due to the model size and computational cost.\\
+Recently other models have been proposed with the aim to reduce the number of parameters, thus yielding lightweight models without weakening their efficience.
+In this work, we investigate the limits of compact models for small-scale images and focus on one the most compact models for age classification, implementing it in 
+practice to evaluate its performance.
+
+\section{Related works}
+The following report presents the development of the final project for the Neural Networks course at Università degli studi di Roma 
+"La Sapienza", A.Y. 2020/21.
+
+Our work is based on the study made by ((citation)).
+In the paper ((citation)) they propose a \textbf{C}ompact basic model, \textbf{C}ascaded training and multi-scale \textbf{C}ontext, 
+aiming to tackle small-scale image \textbf{A}ge \textbf{E}stimation. The model is called \textbf{C3AE}.
+
+The proposed model is able to achieve a state-of-the-art performance compared with alternative compact models and even outperforms many 
+bulky models. With an extremely compact model of 0.25 MB for the full model, which is possibly the smallest model that has been
+obtained so far on the facial recognition, C3AE is suitable to be deployed even on low-end mobiles and embedded platforms.
+A discussion on which techniques have been used to attain the desired results are discussed in a later chapter.\cite{prova}
+
+\section{Report organization section}
+((Report organization section?))

@@ -1,6 +1,7 @@
 .ipynb_checkpoints
-path_constants.py
+utils/path_constants.py
 __pycache__
+.vscode
 
 report/*.aux
 report/*.fdb_latexmk
@@ -9,3 +10,6 @@ report/*.log
 report/*.synctex.gz
 report/*.out
 report/*.toc
+report/*.bcf
+report/*.run.xml
+report/*.pdf

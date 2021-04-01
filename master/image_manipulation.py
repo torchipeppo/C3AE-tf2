@@ -85,7 +85,7 @@ def clip_box(box, image):
         #print("box_shape[1] =", int(box_shape[1]))
         #print("img_shape[1] =", int(img_shape[1]))
         #print("\n\n")
-        #cv2.imwrite(r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\errore_box_{}.jpg".format(contaerrori), image)
+        #cv2.imwrite(r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\errore_box_{}.jpg".format(contaerrori), image)
 
     #assert box_shape[0]<=img_shape[0] and box_shape[1]<=img_shape[1], "box più grande di immagine+padding, resize fallirebbe 100%"
 
@@ -195,8 +195,8 @@ def random_temperature(img, rn_bounds=(0.0, 1.2)):       # , moneta_truccata=0.5
 
 # testing
 if __name__=="__main__":
-    img = cv2.imread(r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\DSC02107(2).jpg")
+    img = cv2.imread(r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\DSC02107(2).jpg")
     warm_img = random_temperature(img, rn_bounds=(0.0, 1.2), moneta_truccata=999)
     cool_img = random_temperature(img, rn_bounds=(0.0, 1.2), moneta_truccata=-999)
-    cv2.imwrite(r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\DSC02107(2)_warm.jpg", warm_img)
-    cv2.imwrite(r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\DSC02107(2)_cool.jpg", cool_img)
+    cv2.imwrite(r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\DSC02107(2)_warm.jpg", warm_img)
+    cv2.imwrite(r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\DSC02107(2)_cool.jpg", cool_img)

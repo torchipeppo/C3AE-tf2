@@ -3,7 +3,7 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 
-folder_of_interest=r"C:\Users\Giovanni\Universita\(M) Anno I\Neural Networks\dataset\UTKFace\in_the_wild"
+folder_of_interest=r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\dataset\UTKFace\in_the_wild"
 
 with open(os.path.join(folder_of_interest, "landmark_list.txt"), "r") as landmark_file:
     line = landmark_file.readline()
