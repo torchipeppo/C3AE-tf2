@@ -29,6 +29,20 @@
 \usepackage{breqn}
 \usepackage{verbatim}
 
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{hyperref}  % importare per ultimo https://www.overleaf.com/learn/latex/Hyperlinks
+\definecolor{dkgrey}{rgb}{0.2, 0.2, 0.2}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=dkgrey,
+    urlcolor=cyan,
+		pdftitle={Report of C3AE Project},
+}
+% collegamento ipertestuale che scrive anche nome e numero del capitolo/sezione.
+% Source: https://tex.stackexchange.com/questions/121865/nameref-how-to-display-section-name-and-its-number
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\autoref*{#1}: \nameref*{#1}}}
+
 \setlength{\parindent}{0pt}
 
 \begin{document}
@@ -91,10 +105,35 @@
 \bibliography{bibliography}
 \bibliographystyle{ieeetr}
 
-\begin{thebibliography}{100} 
+\begin{thebibliography}{100}
 
 	\bibitem{prova} {Pippo, Pluto e Paperino. Guida di Paperopoli. ICLR, 1050:11, 2021}
-	
+
+	% [Francesco] Prevedo problemi di merge in questa sezione,
+	% quindi rendo più esplicito che mai che
+	% QUESTE SONO LE CITAZIONI CHE AGGIUNGO PER IL CAPITOLO 2
+	\bibitem{wiki}{
+		Rasmus Rothe and Radu Timofte and Luc Van Gool.
+		\textit{Deep expectation of real and apparent age from a single image without facial landmarks}.
+		IJCV 126(2-4):144–157, 2016.
+	}
+	\bibitem{fgnet}{
+		Yun Fu, Guodong Guo, and Thomas S Huang.
+		\textit{Age synthesis and estimation via faces: A survey}.
+		IEEE Trans. on Pattern Analysis and Machine Intelligence 32(11):1955–1976, 2010.
+	}
+	\bibitem{mtcnn}{
+		Kaipeng Zhang, Zhanpeng Zhang, Zhifeng Li, Yu Qiao.
+		\textit{Joint Face Detection and Alignment using Multi-task Cascaded Convolutional Networks}.
+		IEEE Signal Processing Letters 23(10):1499–1503, 2016.
+	}
+  \bibitem{random_erasing}{
+    Zhun Zhong, Liang Zheng, Guoliang Kang, Shaozi Li, and Yi Yang.
+    \textit{Random erasing data augmentation}.
+    arXiv preprint arXiv:1708.04896, 2017.
+  }
+	% FINE DELLE CITAZIONI CHE AGGIUNGO PER IL CAPITOLO 2
+	% rimuovere questi commenti quando siamo sicuri che il merge è andato bene
 \end{thebibliography}
 
 

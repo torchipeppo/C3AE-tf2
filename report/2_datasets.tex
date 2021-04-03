@@ -1,8 +1,84 @@
 %!TEX root = report.tex
 
 \chapter{Datasets}
-Donec id lacus venenatis, molestie lorem nec, commodo erat. Aliquam scelerisque sollicitudin diam, nec finibus lacus faucibus vitae. Pellentesque sapien est, volutpat non velit vel, eleifend tempus turpis. Aenean vehicula pretium lectus, ac consequat mi pretium at. Aliquam quis elit quam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla ornare, diam sed convallis sodales, dui lectus lobortis mauris, eu faucibus urna lacus eu metus. Quisque vitae varius risus. Ut a lacus sit amet massa iaculis elementum id quis ante. Vestibulum imperdiet ante erat, eget gravida purus condimentum ut. In a leo sed ligula placerat vulputate eget eget turpis. Mauris justo risus, sodales commodo nibh at, pulvinar facilisis leo. Donec vel condimentum nibh. Nullam ac mi nec felis pellentesque vulputate. Nulla facilisi.
+
+Our C3AE implementation was trained and tested on the following datasets:
+
+\begin{itemize}
+  \item \textbf{Wiki}:
+    a large dataset containing 62,328 labelled
+    images\footnote{Collected and avaliable at \url{https://data.vision.ee.ethz.ch/cvl/rrothe/imdb-wiki/}}
+    collected from Wikipedia \cite{wiki}.
+    Despite the size, it lacks samples of very young
+    or very old people, and it is quite noisy.
+    The cropped and aligned version of the dataset
+    was used in order to ensure each picture has a single face in it.
+    This dataset was used as a pre-training set for ((one experiment))
+    and as the training set for the whole ablation study.
+  \item \textbf{UTKFace}:
+    a dataset containing over 20,000 labelled
+    images\footnote{Collected and avaliable at \url{https://susanqq.github.io/UTKFace/}}.
+    It covers a wider range of ages compared to Wiki,
+    therefore this dataset was used as the main training set
+    for ((that same experiment)) and as a fine-tuning set after
+    the pre-training with Wiki.
+  \item \textbf{FG-NET}:
+    a dataset containing 1000 labelled
+    images\footnote{Collected and avaliable at \url{https://yanweifu.github.io/FG_NET_data/}}
+    \cite{fgnet}.
+    It is significantly higher-quality and better-curated than the other
+    datasets listed here, but it is extremely small as well.
+    This dataset was used as the test set for all experiments.
+\end{itemize}
+
 \section{Preprocessing}
-pppppppp
-\section{Augmentation}
-lllllll
+Each dataset initially came in the form of a set of image files each with the
+corresponding ground-truth age encoded in the file name in some way.
+In order to make the datasets usable by our model, the following
+preprocessing procedure was applied to each of them.
+
+First of all, the age information is extracted from the file name of each
+image through a dataset-dependent regular expression. \\
+Second, the face in each image is detected with the MTCNN face-detection
+network\footnote{Imported as external code from \url{https://github.com/ipazc/mtcnn}}
+\cite{mtcnn}, and the resulting information is used as a base to position
+the three bounding boxes to be used later to generate the different crops
+that C3AE uses as multi-scale context (see \fullref{chp:theorystuff}). \\
+Then, faces with associated age outside the [0, 120] range are filtered
+out of the dataset.
+
+Finally, images, age labels and bounding boxes are all organized into a
+\texttt{pandas} table which is saved to disk in the \texttt{pickle} format,
+in order to be loaded later by the other parts of the code.
+
+\section{Data generation}
+Training, validation and test data are generated in real time
+during the respective phase from the preprocessed dataset. \\
+This requires a small amount of additional processing, which normally
+consists of applying a reflect-type padding to handle bounding boxes
+that are partially outside the border of the image, then generating three
+cropped images, one per bounding box, and finally resizing each of those crops
+to 64×64 pixels, the accepted input size of the C3AE model.
+
+\subsection{Training data augmentation}
+Training data undergo additional transformations during this generation process
+in order to augment the dataset and make the trained model more robust:
+
+\begin{itemize}
+  \item Random erasing: before adding the reflect padding, an arbitrary portion
+    of the image is deleted and replaced with random noise \cite{random_erasing}.
+  \item Random shift: Before cropping, each bounding box is independently
+    shifted by a random amount. If any part of a box would move past the border
+    of the padded image, it stops at the border instead.
+  \item Random contrast, brightness and color temperature change\footnote{
+      The temperature change code was imported as external from
+      \url{https://www.askaswiss.com/2016/02/how-to-manipulate-color-temperature-opencv-python.html}
+      and adapted to randomize the intensity of the change.
+    }
+  \item Random rotation
+  \item Vertical flipping
+\end{itemize}
+
+Each operation has a random probability to be applied and is independent
+of the others, and the intensity of each transformation (except flipping)
+is also random, but limited.
