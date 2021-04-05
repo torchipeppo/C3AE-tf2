@@ -31,6 +31,7 @@
 
 
 \usepackage[dvipsnames]{xcolor}
+\usepackage{wrapfig}
 \usepackage{hyperref}  % importare per ultimo https://www.overleaf.com/learn/latex/Hyperlinks
 \definecolor{dkgrey}{rgb}{0.2, 0.2, 0.2}
 \hypersetup{
@@ -39,6 +40,7 @@
     urlcolor=cyan,
 		pdftitle={Report of C3AE Project},
 }
+\graphicspath{ {./images} }
 % collegamento ipertestuale che scrive anche nome e numero del capitolo/sezione.
 % Source: https://tex.stackexchange.com/questions/121865/nameref-how-to-display-section-name-and-its-number
 \newcommand*{\fullref}[1]{\hyperref[{#1}]{\autoref*{#1}: \nameref*{#1}}}
