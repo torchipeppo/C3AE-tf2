@@ -1,5 +1,33 @@
 %!TEX root = report.tex
 
 \chapter{Conclusions}
-Maecenas quis magna id lorem auctor consequat ut consectetur justo. Suspendisse dui lectus, cursus id nisl sit amet, dapibus sodales ipsum. Duis urna urna, sollicitudin non molestie a, cursus pellentesque ante. Donec laoreet dolor ac ligula mollis lacinia. Aenean at tristique leo. Vestibulum in ultricies est, ac ullamcorper lectus. Phasellus placerat nulla ante, vitae pharetra risus scelerisque ut. Sed consequat sem rhoncus, congue erat in, dignissim nisi. Aenean accumsan quis diam ornare ornare. Vivamus quis vehicula urna, ut rhoncus ligula. 
+
+\begin{center}
+    \begin{tabular}{||c | c c c c c||}
+    \hline
+    Model & Dataset & Augmentation & Epochs & Validation MAE & Test MAE\\ [1ex]
+    \hline\hline
+    Full & Wiki & × & 100 & 8.36 & 24.41 \\ [1ex] 
+    \hline
+    Full & Wiki & Some & 400 & 6.82 & 22.72 \\ [1ex]
+    \hline
+    Full & Wiki & \checked & 100 & ? & 18.11 \\ [1ex]
+    \hline
+    Full & UTK & \checked & 100 & 8.67 & 9.79 \\ [1ex]
+    \hline
+    Full & Wiki + UTK & \checked & 200 & 8.23 & 8.64 \\ [1ex]
+    \hline
+    Full Ablation & Wiki & \checked & 100 & 12.60 & - \\ [1ex] 
+    \hline
+    No Cascade & Wiki & \checked & 100 & 12.60 & - \\ [1ex] 
+    \hline
+    No Context & Wiki & \checked & 100 & 6.88 & - \\ [1ex] 
+    \hline
+   \end{tabular}
+\end{center}
+
+%\begin{figure}[!ht]
+%\centering
+%    \includegraphics[width=300pt]{images/prova.png}
+%\end{figure}
 

@@ -45,7 +45,8 @@ network\footnote{Imported as external code from \url{https://github.com/ipazc/mt
 the three bounding boxes to be used later to generate the different crops
 that C3AE uses as multi-scale context (see \fullref{chp:theorystuff}). \\
 Then, faces with associated age outside the [0, 120] range are filtered
-out of the dataset.
+out of the dataset. Images where less or more than one face is detected
+are also discarded.
 
 Finally, images, age labels and bounding boxes are all organized into a
 \texttt{pandas} table which is saved to disk in the \texttt{pickle} format,

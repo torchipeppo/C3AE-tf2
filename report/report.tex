@@ -28,9 +28,10 @@
 \captionsetup[table]{font=small}
 \usepackage{breqn}
 \usepackage{verbatim}
-
+\usepackage{wasysym}
 
 \usepackage[dvipsnames]{xcolor}
+\usepackage{wrapfig}
 \usepackage{hyperref}  % importare per ultimo https://www.overleaf.com/learn/latex/Hyperlinks
 \definecolor{dkgrey}{rgb}{0.2, 0.2, 0.2}
 \hypersetup{
@@ -39,6 +40,7 @@
     urlcolor=cyan,
 		pdftitle={Report of C3AE Project},
 }
+\graphicspath{ {./images} }
 % collegamento ipertestuale che scrive anche nome e numero del capitolo/sezione.
 % Source: https://tex.stackexchange.com/questions/121865/nameref-how-to-display-section-name-and-its-number
 \newcommand*{\fullref}[1]{\hyperref[{#1}]{\autoref*{#1}: \nameref*{#1}}}
@@ -107,11 +109,8 @@
 
 \begin{thebibliography}{100}
 
-	\bibitem{prova} {Pippo, Pluto e Paperino. Guida di Paperopoli. ICLR, 1050:11, 2021}
+	\bibitem{c3ae} {Chao Zhang, Shuaicheng Liu, Xun Xu, Ce Zhu. \textit{C3AE: Exploring the Limits of Compact Model for Age Estimation}. CoRR, 2019. \\ URL: \texttt{https://arxiv.org/pdf/1904.05059v2.pdf}}
 
-	% [Francesco] Prevedo problemi di merge in questa sezione,
-	% quindi rendo più esplicito che mai che
-	% QUESTE SONO LE CITAZIONI CHE AGGIUNGO PER IL CAPITOLO 2
 	\bibitem{wiki}{
 		Rasmus Rothe and Radu Timofte and Luc Van Gool.
 		\textit{Deep expectation of real and apparent age from a single image without facial landmarks}.
@@ -132,8 +131,7 @@
     \textit{Random erasing data augmentation}.
     arXiv preprint arXiv:1708.04896, 2017.
   }
-	% FINE DELLE CITAZIONI CHE AGGIUNGO PER IL CAPITOLO 2
-	% rimuovere questi commenti quando siamo sicuri che il merge è andato bene
+  
 \end{thebibliography}
 
 
