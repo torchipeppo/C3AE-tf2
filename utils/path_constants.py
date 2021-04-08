@@ -2,7 +2,7 @@ FGNET_IMAGES = r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\datasets\
 FGNET_PICKLE = r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\datasets\FGNET\processed"
 
 WIKI_IMAGES = r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\datasets\wiki_crop"
-WIKI_PICKLE = r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\datasest\wiki_crop\processed"
+WIKI_PICKLE = r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\datasets\wiki_crop\processed"
 
 UTK_IMAGES = r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\datasets\UTKFace\in_the_wild\images"
 UTK_PICKLE = r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\datasets\UTKFace\in_the_wild\processed"

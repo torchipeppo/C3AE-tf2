@@ -15,7 +15,7 @@ Standard convolutional layers are adequate for the trade-off between accuracy an
 opposed to the separable convolution block used in the bigger models like MobileNets and ShuffleNets), 
 followed by batch normalization, Relu and average pooling (BRA).\\
 The model is composed of five of these standard convolutions and two fully connected layers as shown 
-in Table 3.1.
+in \autoref{tab:architecture}.
 
 \begin{center}
     \begin{tabular}{||c | c c c c||} 
@@ -48,6 +48,7 @@ in Table 3.1.
     \hline
     \end{tabular}
     \captionof{table}{Architecture of the model}
+    \label{tab:architecture}
 \end{center}
 
 To estimate people's age C3AE considers two objectives simultaneously: the first one minimizes the 
@@ -60,6 +61,7 @@ In the following sections are mentioned this and other techniques used in C3AE.
     \centering
     \includegraphics[width=400pt]{images/model.jpg}
     \caption{Overview of the model age estimation process}
+    \label{fig:overview}
 \end{figure}
 
 \subsection*{Context-based Regression}
@@ -93,6 +95,3 @@ $L_{total} = \alpha L_{kl} + L_{reg}$, where $\alpha$ is the hyperparameter to b
 
 \section{Implementation}
 TODO
-
-\section{Spiegazione problema}
-?

@@ -1,0 +1,29 @@
+model_wiki_100epochs_fullmodel_noaugment.h5
+mae = 24.416044401168822
+kld = 5.9454293
+
+model_wiki_400_epochs.h5
+mae = 22.721267246246338
+kld = 3.988578
+
+model_wiki_100epochs_fullmodel.h5
+mae = 18.119298822402953
+kld = 2.8817408
+
+model_utk_100epochs_fullmodel.h5
+mae = 9.795350608825684
+kld = 1.3031657
+
+model_wiki_utk_200epochs_fullmodel.h5
+mae = 8.640098349571229
+kld = 1.0987455
+
+model_wiki_100epochs_nocontext.h5
+mae = 20.735939044952392
+kld = 3.0069067
+
+model_wiki_100epochs_nocascade.h5
+mae = 18.679401016235353
+
+model_wiki_100epochs_fullablation.h5
+mae = 18.693051345825197

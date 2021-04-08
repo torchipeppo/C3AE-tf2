@@ -98,16 +98,19 @@ def do_train(
     opti = keras.optimizers.Adam(lr=lr)
 
     losses = ["mae", "kullback_leibler_divergence"]
+    loss_weights = [1,loss_weight_factor]
+    
     if ablate_cascade:
         # se usiamo un modello senza cascade, non esiste la rappresentazione two-point,
         # quindi non dobbiamo considerare la perdita
         losses = losses[0:1]   # questa notazione prende solo il primo elemento, ma dà una lista anziché solo quell'elemento
+        loss_weights = None
 
     model.compile(
         optimizer=opti,
         loss=losses,
         metrics={"age":"mae"},
-        loss_weights=[1,loss_weight_factor]
+        loss_weights=loss_weights
     )
 
     history = model.fit(    # anziché fit_generator

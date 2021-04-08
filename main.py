@@ -77,6 +77,18 @@ parser.add_argument(
     help="In -training, start an ablation study that trains many variants of the model."
 )
 
+parser.add_argument(
+    '--ablate-context', '--abco',
+    action="store_true",
+    help="In -use-test-set, activate context ablation."
+)
+
+parser.add_argument(
+    '--ablate-cascade', '--abca',
+    action="store_true",
+    help="In -use-test-set, activate cascade ablation."
+)
+
 args = parser.parse_args()
 
 # importiamo i moduli all'ultimo momento per evitare il caricamento di tensorflow se sbagliamo la CLI
@@ -113,4 +125,4 @@ elif args.use_test_set!=None:
     dataset_pickle_path = DATASET_PICKLE_PATHS[dataset_name]
     model_path = search_model_file(args.model)
     from tests import use_test_set
-    use_test_set.test_main(dataset_pickle_path, model_path)
+    use_test_set.test_main(dataset_pickle_path, model_path, args.ablate_context, args.ablate_cascade)

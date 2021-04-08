@@ -49,12 +49,17 @@ def do_test(
         preds_list.append(model.predict(x))
         gt_list.append(y)
         step+=1
-    predictions = concatenate_batch_results(preds_list)
+    if not ablate_cascade:
+        predictions = concatenate_batch_results(preds_list)
+    else:
+        predictions = [np.concatenate(preds_list, axis=0)]
+    print(predictions)
     groundtruths = concatenate_batch_results(gt_list)
+    print(groundtruths)
 
     return predictions, groundtruths
 
-def test_main(dataset_pickle_path, model_path):
+def test_main(dataset_pickle_path, model_path, ablate_context, ablate_cascade):
     os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'    
 
     if tf.test.gpu_device_name(): 
@@ -76,11 +81,12 @@ def test_main(dataset_pickle_path, model_path):
 
     print(f"Caricato dataset da {dataset.shape[0]} immagini")
 
-    preds, gts = do_test(dataset, model_path)
+    preds, gts = do_test(dataset, model_path, ablate_context=ablate_context, ablate_cascade=ablate_cascade)
 
     mae = sklearn.metrics.mean_absolute_error(gts[0], preds[0])
     print("mae =",mae)
 
-    kl_loss = keras.losses.KLDivergence()
-    kld = kl_loss(gts[1], preds[1]).numpy()
-    print("kld =",kld)
+    if not ablate_cascade:
+        kl_loss = keras.losses.KLDivergence()
+        kld = kl_loss(gts[1], preds[1]).numpy()
+        print("kld =",kld)
