@@ -93,5 +93,64 @@ In the training process the two loss functions are considered in the cascade sty
 but they are still trained jointly, and the total loss is given as
 $L_{total} = \alpha L_{kl} + L_{reg}$, where $\alpha$ is the hyperparameter to balance the two losses.
 
+\subsection*{((Squeeze and excitation?))}
+
 \section{Implementation}
-TODO
+Our implementation of the C3AE model can be found in 
+\href{https://github.com/torchipeppo/NN-project}{this GitHub repository} ((change href color?)).
+The code for this part of the project is based on the Tensorflow library for Python and was written in 
+Visual Studio Code text editor, collaborating remotely using the Live Share extension feature, which let 
+us write the code together.
+\subsection*{The model}
+The code of the model implementation can be found in the directory \texttt{master/model.py}. We followed 
+as strictly as possible the structure indicated in the reference paper, both in the number, composition 
+and ordering of the layers and also in the choice of parameters such as kernel dimensions, bottleneck
+dimension and squeeze factors.
+The Keras package integrated in Tensorflow provided all the basic functions needed to implement the
+building blocks of the C3AE plain model, shared by all three of the image cuts.
+
+
+In the last part of the file we organized the code so that we could be able to replicate the ablation
+studies conducted in the original C3AE paper. Ablation studies are procedure where certain parts of the 
+network are removed, in order to gain a better understanding of the network’s behaviour. In our case, 
+the two ablations affect the presence or the absence of the cascade module and the context module.
+The \texttt{model.py} file therefore gives us the possibility to analize not only the full context 
+model, but also compare it with three slightly simpler ones: the model without cascade, without context 
+and without both.
+
+The presence of these alternative versions required some changes in the code:
+
+\begin{itemize}
+    \item \textit{Context ablation}: produces only one simple input, instead of three concatenated ones, 
+    before computing the losses in the training phase. This means we will train using only one cut of the 
+    photos, the outer one.
+    \item \textit{Cascade ablation}: in this case we lose the concept of two-point age representation.
+    We replace the last dense layer W1 with a hidden layer with no particular meaning and then only
+    considered one output, the age prediction, and ignore the second output, the age distribution.
+    It follows thatin the training phase we will only evaluate the MAE loss in this case, since the KL 
+    divergence loss will no longer be present. 
+    \item \textit{Full ablation}: both of the above modifications apply.
+\end{itemize}
+
+The results of these ablation studies are discussed later in \fullref{sec:ablation_study}.
+
+\subsection*{The training}
+The code relevant to the training phase can be found in \texttt{master/training.py}. Again, the choice of
+the parameters such as learning rate, batch sizes and optimizers follows the values indicated in the source 
+paper when possible, with a couple of exceptions.
+
+The dataset split ratio into training and validation was not specified for the datasets we used, so we 
+chose a value of 88\% - 12\%.
+
+In the original paper for a comparison with the state-of-the-art methods, each model has been trained for 
+600 epochs. In our implementation this number had to be cut down to 100, the reason being time constraints 
+and hardware availability. All training was conducted locally on a machine with a Nvidia GTX 1660 SUPER GPU, 
+and even with 100 epochs each training phase lasted for 10 hours on average. A discussion on how this 
+cutback may not have affected the final results is present in the next chapter.
+
+In this section of the code we also implemented the possibility to take an already trained model and continue
+its training on another dataset, instead of starting over from zero. An experiment taking advantage of this 
+feature is described in \fullref{sec:wikiutk}.
+
+
+
