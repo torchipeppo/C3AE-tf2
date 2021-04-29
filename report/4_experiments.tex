@@ -6,11 +6,13 @@ In this chapter we detail the experiments performed on the model described in
 \fullref{chp:theorystuff} and discuss the respective results.
 
 \section{First experiment}
+\label{subsec:first}
 
 % documentazione wrapfig: https://ctan.mirror.garr.it/mirrors/ctan/macros/latex/contrib/wrapfig/wrapfig-doc.pdf
 % lo segno perché il primo parametro opzionale può tornare utile
-\begin{wrapfigure}[17]{r}{0.5\textwidth}
+\begin{wrapfigure}[15]{r}{0.5\textwidth}
     \centering
+    \vspace{-20pt}
     \includegraphics[width=0.5\textwidth]{400_loss}
     \caption{Initial experiment loss (400 epochs on Wiki)}
     \label{fig:400_loss}
@@ -35,13 +37,17 @@ in order to reduce the experiments' computation time.
 \section{Performance evaluation over multiple datasets}
 
 All the following experiments have been performed on datasets processed with the 
-augmentation techniques described in \fullref{sec:augmentation} unless stated otherwise.
+augmentation techniques described in \fullref{subsec:augmentation} unless stated otherwise.
+
+\newpage
 
 \subsection{Wiki}
+\label{subsec:wiki}
 
-\begin{wrapfigure}[17]{r}{0.5\textwidth}
+\begin{wrapfigure}[15]{r}{0.5\textwidth}
   \centering
-  \includegraphics[width=0.5\textwidth]{full_model_loss}
+  \vspace{-20pt}
+  \includegraphics[width=0.5\textwidth]{full_model_mae}
   \caption{MAE on Wiki dataset (100 epochs)}
   \label{fig:wiki_loss}
 \end{wrapfigure}
@@ -62,11 +68,13 @@ age on average and comprises even newborns with a declared age of 0 years.
 The result is that the model in this experiment always overshoots the age of the 
 subjects and thus we obtain a high error.
 
-\subsection{Utk}
+\subsection{UTK}
+\label{subsec:utk}
 
-\begin{wrapfigure}[17]{r}{0.5\textwidth}
+\begin{wrapfigure}[12]{r}{0.5\textwidth}
   \centering
-  \includegraphics[width=0.5\textwidth]{utk_loss}
+  \vspace{-20pt}
+  \includegraphics[width=0.5\textwidth]{utk_mae}
   \caption{MAE on UTK dataset (100 epochs)}
   \label{fig:utk_loss}
 \end{wrapfigure}
@@ -78,15 +86,16 @@ As a matter of fact the validation MAE (computed on the UTK set itself) is sligh
 higher than before at 8.67, but the test MAE on FGNET is almost halved, at 9.79 years.
 
 The conclusion is that UTK is a better dataset for our experiments, but we can still 
-use Wiki, as seen on the next experiment
+use Wiki, as seen on the next experiment.
 
-\subsection{Wiki + Utk}
-\label{sec:wikiutk}
+\subsection{Wiki + UTK}
+\label{subsec:wikiutk}
 
-\begin{wrapfigure}[17]{r}{0.5\textwidth}
+\begin{wrapfigure}[11]{r}{0.5\textwidth}
   \centering
-  \includegraphics[width=0.5\textwidth]{wiki+utk_200_loss}
-  \caption{MAE on Wiki+Utk dataset (100 epochs)}
+  \vspace{-20pt}
+  \includegraphics[width=0.5\textwidth]{wiki+utk_200_mae}
+  \caption{MAE on Wiki+UTK (100 epochs)}
   \label{fig:wiki+utk_loss}
 \end{wrapfigure}
 
@@ -112,17 +121,71 @@ We trained the following variants of the full C3AE model:
   \item \textit{No augmentation}: the data augmentation transformations
     on the training data are disabled.
   \item \textit{No context}: the context module of C3AE is excluded.
-    Therefore, only one crop, the outermost one, is given as input to
-    the model, and obviously there is no concatenation phase.
+    Therefore, only one crop is given as input to the model.
   \item \textit{No cascade}: the cascade module of C3AE is excluded.
-    Consequently, the intermediate layer between the concatenated feature vector
-    and the age output loses its meaning of two-point representation of age
-    and becomes a plain hidden layer. This also means that this variant
-    does not compute any KL Divergence and outputs only the final age estimation;
-    the loss depends only on the age MAE as well.
+    Consequently, this variant does not compute any KL Divergence and 
+    outputs only the final age estimation.
   \item \textit{No context and no cascade}: both modules are disabled.
 \end{itemize}
 
-Each variant was trained for 100 epochs on the Wiki dataset.
+Each variant was trained for 100 epochs on the Wiki dataset, so every ablation experiment
+results must be compared to the baseline results of the one described in \fullref{subsec:wiki}.
 
-((plot and discuss results))
+\subsection{No augmentation}
+\label{subsec:no_augmentation}
+
+In this first ablation study we removed the whole augmentation process described 
+in \fullref{subsec:augmentation}. The validation MAE increases by 23\% compared to
+the the Wiki full model experiments, and the test MAE by not less that 30\%. 
+We conclude that the augmentation phase implemented by us has been highly beneficial 
+to the full model performance.
+
+\subsection{No context}
+\label{subsec:no_context}
+
+After the removal of the context module, the model retained its performance
+if we consider only the validation results (MAE = 6.88). However when examining
+the test results on FGNET they are rather worse then before, with the test MAE going 
+from 18.11 to 20.73. This performance difference proves us that considering image cuts
+with three different levels of details instead of only one and combining their results 
+is useful to the full model performance.
+
+\subsection{No cascade}
+\label{subsec:no_cascade}
+
+When we take out the cascade module we the only metric that contributes to the total loss is
+the MAE, since we lose the output with the age distribution and also the KLD loss.
+The direct exstimation of an age from the image in input is quite a harder task, judging
+by the results of this experiment.
+The validation MAE is by far the highest found so far, at 12.6 years, and the test MAE on FGNET 
+isn't great either, reaching 18.67. Once again, we can interpret this performance drop as a 
+proof that also the cascade module is essential to obtain a good result in the full model.
+
+\subsection{Full ablation}
+\label{subsec:full_ablation}
+
+The absence of both the previous modules results unsurprisingly in a performance comparable 
+to the worst of the two. The validation and test MAE values are in fact aligned to the MAEs 
+returned by the "no cascade" model.
+
+\begin{figure}
+  \centering
+  \subfloat[MAE without augmentation]{
+    \includegraphics[width=65mm]{no_augm_mae}
+    \label{fig:no_augm}
+  }
+  \subfloat[MAE without context]{
+    \includegraphics[width=65mm]{no_context_mae}
+    \label{fig:no_context}
+  }
+  \hspace{0mm}
+  \subfloat[MAE without cascade]{
+    \includegraphics[width=65mm]{no_cascade_mae}
+    \label{fig:no_cascade}
+  }
+  \subfloat[MAE without either]{
+    \includegraphics[width=65mm]{full_ablation_mae}
+    \label{fig:full_ablation}
+  }
+  \caption{Ablation Study MAE}
+\end{figure}
