@@ -3,31 +3,30 @@
 \chapter{Conclusions}
 
 \begin{center}
-    \begin{tabular}{||c | c c c c c||}
+    \begin{tabular}{||c | c c c c c c||}
     \hline
-    Model & Dataset & Augmentation & Epochs & Validation MAE & Test MAE\\ [1ex]
+    Section & Model & Dataset & Augmentation & Epochs & Validation MAE & Test MAE\\ [1ex]
     \hline\hline
-    Full & Wiki & × & 100 & 8.36 & 24.41 \\ [1ex] 
+    First & Full & Wiki & Some & 400 & 6.82 & 22.72 \\ [1ex]
     \hline
-    Full & Wiki & Some & 400 & 6.82 & 22.72 \\ [1ex]
+    Wiki & Full & Wiki & \checked & 100 & 6.79 & 18.11 \\ [1ex]
     \hline
-    Full & Wiki & \checked & 100 & 6.79 & 18.11 \\ [1ex]
+    UTK & Full & UTK & \checked & 100 & 8.67 & 9.79 \\ [1ex]
     \hline
-    Full & UTK & \checked & 100 & 8.67 & 9.79 \\ [1ex]
+    Wiki+UTK & Full & Wiki + UTK & \checked & 100+100 & 8.23 & 8.64 \\ [1ex]
     \hline
-    Full & Wiki + UTK & \checked & 100+100 & 8.23 & 8.64 \\ [1ex]
+    No augm & Full & Wiki & × & 100 & 8.36 & 24.41 \\ [1ex]
     \hline
-    Full Ablation & Wiki & \checked & 100 & 12.60 & 18.69 \\ [1ex] 
+    Abl & Full Ablation & Wiki & \checked & 100 & 12.60 & 18.69 \\ [1ex]
     \hline
-    No Cascade & Wiki & \checked & 100 & 12.60 & 18.67 \\ [1ex] 
+    Abl & No Cascade & Wiki & \checked & 100 & 12.60 & 18.67 \\ [1ex]
     \hline
-    No Context & Wiki & \checked & 100 & 6.88 & 20.73 \\ [1ex] 
+    Abl & No Context & Wiki & \checked & 100 & 6.88 & 20.73 \\ [1ex]
     \hline
-   \end{tabular}
+    \end{tabular}
 \end{center}
 
 %\begin{figure}[!ht]
 %\centering
 %    \includegraphics[width=300pt]{images/prova.png}
 %\end{figure}
-
