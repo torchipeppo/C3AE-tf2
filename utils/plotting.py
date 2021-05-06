@@ -1,3 +1,8 @@
+"""
+Genera dei grafici in base ai dati salvati nella history di tf.
+Usato come script stand-alone a training fatto.
+"""
+
 import matplotlib.pyplot as plt
 import pickle
 import os
@@ -21,7 +26,6 @@ def plot_loss(history, name=""):
 
 def plot_cascade_KLD(history, name=""):
     if "W1_loss" not in history.keys():
-        print("...")
         plt.title('ERROR: Name "{}" has no Cascade Module'.format(name))
         plt.show()
         return
@@ -45,7 +49,6 @@ def plot_mae(history, name=""):
     key = 'age_mae'
     val_key = 'val_age_mae'
     if key not in history.keys():
-        print("!!")
         key = 'mae'
         val_key = 'val_mae'
     plt.plot(history[key])

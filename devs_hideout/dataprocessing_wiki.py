@@ -128,13 +128,13 @@ def process_wiki(dataset_dir, overwrite=False):
     
     for root, __dirs, files in os.walk(dataset_dir):
         for fname in files:
-            if fname=="wiki.mat": continue # skippo
+            if fname=="wiki.mat": continue
             found = re.findall(r'[\d]+', fname)
             assert len(found)>=5, "Error"+fname
             year_of_birth = int(found[1])
             year_taken = int(found[-1])
             age = year_taken - year_of_birth
-            #assert age>=0, "Hai fotografato un feto?"
+            #assert age>=0, "Errore, età negativa"
             ages.append(age)
             path = os.path.abspath(os.path.join(root, fname))
             paths.append(path)
@@ -152,7 +152,6 @@ def process_wiki(dataset_dir, overwrite=False):
 
 if __name__=="__main__":
 
-    #senza questa riga non sembra funzionare: da approfondire
     #os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true' 
 
     with tf.device('/cpu:0'):

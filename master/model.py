@@ -45,10 +45,8 @@ def plain_model(
     input_width=64, 
     input_channels=3, 
     # decide portare le immagini in [-1,1] o tenerle in [0,255]
-    # lasciato parametrico per avere l'eventuale possibilità di fare test comparativi
     normalize=True, 
     # decide se usare il blocco squeeze-and-excitation o no.
-    # ancora, parametrico per test compartativi.
     use_SE=True,
     # decide in che modo appiattire l'input alla fine del modello
     use_actual_flatten=True
@@ -157,7 +155,7 @@ def full_context_model(
     return model
 
 if __name__=="__main__":
-    print("Hai evocato il test della morte supremo")
+    print("Attivato test totale")
 
     model_full = full_context_model(name="model_full")
     print(model_full.summary())

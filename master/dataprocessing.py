@@ -30,7 +30,7 @@ CROP_BOXES_COL = "crop_boxes"
 PRE_COLS = [PATH_COL, AGE_COL]
 COLS = [IMAGE_COL, AGE_COL, CROP_BOXES_COL]
 
-MTCNN_DETECT = MTCNN() #min_face_size=50?  (TODO cancellare)
+MTCNN_DETECT = MTCNN()
 
 def make_true_dataset(early_dataset):
     # semplice cronometraggio
@@ -120,8 +120,6 @@ def read_image_and_process(row, detector=None, start_time=None):
             return row
         box = convert_box_ipazc_to_ours(detect_results[0]["box"])
         keypoints = detect_results[0]["keypoints"]
-        # MEMENTO: se dovessimo usare un dataset che ha bisogno di allineare le facce, questo è un buon punto per farlo
-        #          in tal caso, ricordarsi di ri-detectare la faccia subito dopo
         crop_boxes = generate_the_three_boundingboxes(box, keypoints)
     else:
         # Quadrati fissi, vicino al centro dell'immagine.
@@ -180,7 +178,7 @@ def read_early_dataset_wiki(name="wiki"):
             year_of_birth = int(found[1])
             year_taken = int(found[-1])
             age = year_taken - year_of_birth
-            #assert age>=0, "Hai fotografato un feto?"
+            #assert age>=0, "Errore, età<0"
             ages.append(age)
             path = os.path.abspath(os.path.join(root, fname))
             paths.append(path)
@@ -221,12 +219,8 @@ def process_dataset(name, overwrite=False):
         name
     )
 
+# test
 if __name__=="__main__":
-    # process_fgnet(path_constants.FGNET_IMAGES)
-
-    # with tf.device('/cpu:0'):
-        # process_wiki(path_constants.WIKI_IMAGES)
-    
     with tf.device('/cpu:0'):
         process_dataset("utk")
 

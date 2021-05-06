@@ -1,3 +1,8 @@
+"""
+Verifica che i modelli siano costruiti correttamente
+tentando di invocarli e assicurandosi che non lancino eccezioni.
+"""
+
 import numpy as np
 import pandas as pd
 

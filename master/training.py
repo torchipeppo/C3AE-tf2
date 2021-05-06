@@ -64,7 +64,7 @@ def do_train(
     loss_weight_factor=10,
     seed=14383421,
     bins=10,
-    epochs=10,   # 250
+    epochs=100,
     augment=True,
     ablate_context=False,
     ablate_cascade=False,
@@ -116,7 +116,7 @@ def do_train(
     history = model.fit(    # anziché fit_generator
         train_gen,
         steps_per_epoch = len(trainset)/batch_size,
-        epochs=epochs,   # 250
+        epochs=epochs,
         validation_data=valid_gen,
         validation_steps = len(validset)/batch_size*3
     )
@@ -145,7 +145,7 @@ def do_train(
         pickle.dump(history.history, f)
 
 def train_main(dataset_pickle_path, epochs, ablation, pretrained_model_path):
-    #senza questa riga non sembra funzionare: da approfondire
+    
     os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'    
 
     if tf.test.gpu_device_name(): 
@@ -156,7 +156,7 @@ def train_main(dataset_pickle_path, epochs, ablation, pretrained_model_path):
     files = os.listdir(dataset_pickle_path)
     frames=[]
     for fname in files:
-        if ".pkl" not in fname: continue   # skippa ciò che non è un pickle
+        if ".pkl" not in fname: continue   # salta ciò che non è un pickle
         path = os.path.join(dataset_pickle_path, fname)
         frame = pd.read_pickle(path)
         frames.append(frame)

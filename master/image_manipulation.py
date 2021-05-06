@@ -76,17 +76,6 @@ def clip_box(box, image):
     )
     img_shape = image.shape
 
-    #log
-    #if box_shape[0]>img_shape[0] or box_shape[1]>img_shape[1]:
-        #print("\n\n")
-        #print("FALLIMENTO")
-        #print("box_shape[0] =", int(box_shape[0]))
-        #print("img_shape[0] =", int(img_shape[0]))
-        #print("box_shape[1] =", int(box_shape[1]))
-        #print("img_shape[1] =", int(img_shape[1]))
-        #print("\n\n")
-        #cv2.imwrite(r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\errore_box_{}.jpg".format(contaerrori), image)
-
     #assert box_shape[0]<=img_shape[0] and box_shape[1]<=img_shape[1], "box più grande di immagine+padding, resize fallirebbe 100%"
 
     # se la box va troppo in alto
@@ -108,7 +97,8 @@ def clip_box(box, image):
         (box[1][0]+shift_vert, box[1][1]+shift_horiz)
     ]
 
-def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64), padding=585, erasing_probability=0.3, other_transf_prob_each=0.5):  # TODO(?) dizionario padding: (wiki=250), (utk=585)
+# Padding: (wiki=250), (utk=585)
+def get_image_crops(row_with_index, seed, augment, nn_input_shape=(64,64), padding=585, erasing_probability=0.3, other_transf_prob_each=0.5):
     __index, row = row_with_index[0], row_with_index[1]
     image = np.frombuffer(row.image, np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
@@ -171,7 +161,7 @@ def cool(img_bgr_in, incr_ch_lut, decr_ch_lut):
     img_bgr_cold = cv2.cvtColor(cv2.merge((c_h, c_s, c_v)), cv2.COLOR_HSV2BGR)
     return img_bgr_cold
 
-def random_temperature(img, rn_bounds=(0.0, 1.2)):       # , moneta_truccata=0.5):
+def random_temperature(img, rn_bounds=(0.0, 1.2)):
     # Step 0 (ours) : random intensity
     x = np.array([0, 64, 128, 192, 256])
     rn = np.random.uniform(*rn_bounds)
@@ -194,9 +184,5 @@ def random_temperature(img, rn_bounds=(0.0, 1.2)):       # , moneta_truccata=0.5
 
 
 # testing
-if __name__=="__main__":
-    img = cv2.imread(r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\DSC02107(2).jpg")
-    warm_img = random_temperature(img, rn_bounds=(0.0, 1.2), moneta_truccata=999)
-    cool_img = random_temperature(img, rn_bounds=(0.0, 1.2), moneta_truccata=-999)
-    cv2.imwrite(r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\DSC02107(2)_warm.jpg", warm_img)
-    cv2.imwrite(r"C:\Users\Giovanni\Universita\M_Anno_I\Neural Networks\DSC02107(2)_cool.jpg", cool_img)
+# if __name__=="__main__":
+    # we used to have a test here, but it uses actual paths from our machine.

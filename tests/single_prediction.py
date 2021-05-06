@@ -1,3 +1,9 @@
+"""
+Permette di predire l'età di una singola foto data in input, 
+restituendo la stessa immagine modificata con l'aggiunta delle boxes 
+e dell'età 
+"""
+
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -11,7 +17,7 @@ from utils import path_constants
 import mtcnn     # EXTERNAL CODE, see readme in mtcnn
 MTCNN = mtcnn.mtcnn.MTCNN
 
-MTCNN_DETECT = MTCNN() #min_face_size=50?  (TODO cancellare)
+MTCNN_DETECT = MTCNN()
 
 def sp_main(image_path, model_path, silent=False, seed=14383421):
     # possiamo riutilizzare le funzioni scritte in precedenza,

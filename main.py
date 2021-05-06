@@ -1,10 +1,6 @@
 import argparse
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-# 0 = all messages are logged (default behavior)
-# 1 = INFO messages are not printed
-# 2 = INFO and WARNING messages are not printed
-# 3 = INFO, WARNING, and ERROR messages are not printed
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'   # 2 = silenzia messaggi INFO and WARNING
 
 from utils import path_constants
 
@@ -91,9 +87,10 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-# importiamo i moduli all'ultimo momento per evitare il caricamento di tensorflow se sbagliamo la CLI
+# importiamo i moduli all'ultimo momento (ciascuno nella propria sezione)
+# per evitare il caricamento di tensorflow se sbagliamo la CLI
 
-# accendiamo una flag per gestire meglio la GPU e permetter a tutto di funzionare
+# accendiamo una flag per gestire meglio la GPU e permettere a tutto di funzionare
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'    
 
 if args.dataprocessing!=None:

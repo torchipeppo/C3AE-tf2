@@ -1,3 +1,7 @@
+"""
+Esegue la valutazione di un modello col dataset di test specificato.
+"""
+
 import tensorflow as tf
 import tensorflow.keras as keras
 import numpy as np
@@ -70,7 +74,7 @@ def test_main(dataset_pickle_path, model_path, ablate_context, ablate_cascade):
     files = os.listdir(dataset_pickle_path)
     frames=[]
     for fname in files:
-        if ".pkl" not in fname: continue   # skippa ciò che non è un pickle
+        if ".pkl" not in fname: continue   # salta ciò che non è un pickle
         path = os.path.join(dataset_pickle_path, fname)
         frame = pd.read_pickle(path)
         frames.append(frame)
