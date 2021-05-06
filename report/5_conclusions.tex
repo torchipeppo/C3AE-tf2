@@ -2,26 +2,21 @@
 
 \chapter{Conclusions}
 
-\begin{center}
-    \begin{tabular}{||c | c c c c c c||}
-    \hline
-    Section & Model & Dataset & Augm. & Epochs & Valid. MAE & Test MAE\\ [1ex]
-    \hline\hline
-    \hyperref[subsec:first]{First} & Full & Wiki & Some & 400 & 6.82 & 22.72 \\ [1ex]
-    \hline
-    \hyperref[subsec:wiki]{Wiki} & Full & Wiki & \checked & 100 & 6.79 & 18.11 \\ [1ex]
-    \hline
-    \hyperref[subsec:utk]{UTK} & Full & UTK & \checked & 100 & 8.67 & 9.79 \\ [1ex]
-    \hline
-    \hyperref[subsec:wikiutk]{Wiki+UTK} & Full & Wiki+UTK & \checked & 100+100 & 8.23 & 8.64 \\ [1ex]
-    \hline
-    \hyperref[subsec:no_augmentation]{No augm.} & Full & Wiki & × & 100 & 8.36 & 24.41 \\ [1ex]
-    \hline
-    \hyperref[subsec:no_context]{No context} & No context & Wiki & \checked & 100 & 6.88 & 20.73 \\ [1ex]
-    \hline
-    \hyperref[subsec:no_cascade]{No cascade} & No cascade & Wiki & \checked & 100 & 12.60 & 18.67 \\ [1ex]
-    \hline
-    \hyperref[subsec:full_ablation]{Full ablation} & Full ablation & Wiki & \checked & 100 & 12.60 & 18.69 \\ [1ex]
-    \hline
-    \end{tabular}
-\end{center}
+In this project we studied C3AE, a compact model for age estimation.
+We constructed the model according to the indications of \cite{c3ae},
+presented its main characteristics and experimented
+with it on a number of datasets and in different conditions.
+
+Our best result of 8.64 MAE on the test set is roughly in line with the paper's
+6.44, but unfortunately the results are not directly comparable because
+we used different datasets due to Morph not being open and we trained for
+less epochs due to limited hardware availability.
+
+Our own ablation study confirmed the importance of the context and
+cascade modules, as the original authors wrote as well,
+and of the augmentation as well.
+
+In future works and with better hardware availability, we would hope
+to test this model on larger datasets like the full IMDB-WIKI and
+for longer training times. Furthermore, in our opinion evaluating the
+performance of an ensemble of these models is another interesting possibility.

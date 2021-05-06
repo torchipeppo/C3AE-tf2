@@ -24,14 +24,15 @@
 \newcommand\norm[1]{\left\lVert#1\right\rVert}
 \usepackage{caption}
 \captionsetup[lstlisting]{font={small}}
-\captionsetup[figure]{font=small}
-\captionsetup[table]{font=small}
+\captionsetup[figure]{font=small, labelfont={it}, textfont={it}}
+\captionsetup[table]{font=small, labelfont={it}, textfont={it}}
 \usepackage{breqn}
 \usepackage{verbatim}
 \usepackage{wasysym}
 
 \usepackage[dvipsnames]{xcolor}
 \usepackage{wrapfig}
+\usepackage{makecell}
 \usepackage{hyperref}  % importare per ultimo https://www.overleaf.com/learn/latex/Hyperlinks
 \definecolor{dkgrey}{rgb}{0.2, 0.2, 0.2}
 \hypersetup{
@@ -50,7 +51,6 @@
 \begin{document}
 
 \title{Report of C3AE Project}
-
 \makeatletter
 \let\thetitle\@title
 \let\theauthor\@author
@@ -107,29 +107,33 @@
 
 \begin{thebibliography}{100}
 
-	\bibitem{c3ae} {Chao Zhang, Shuaicheng Liu, Xun Xu, Ce Zhu. \textit{C3AE: Exploring the Limits of Compact Model for Age Estimation}. CoRR, 2019. \\ URL: \texttt{https://arxiv.org/pdf/1904.05059v2.pdf}}
+    \bibitem{c3ae} {
+        Chao Zhang, Shuaicheng Liu, Xun Xu, Ce Zhu.
+        \textit{C3AE: Exploring the Limits of Compact Model for Age Estimation}.
+        CoRR, 2019. \\
+        URL: \texttt{https://arxiv.org/pdf/1904.05059v2.pdf}
+    }
+    \bibitem{wiki}{
+        Rasmus Rothe and Radu Timofte and Luc Van Gool.
+        \textit{Deep expectation of real and apparent age from a single image without facial landmarks}.
+        IJCV 126(2-4):144–157, 2016.
+    }
+    \bibitem{fgnet}{
+        Yun Fu, Guodong Guo, and Thomas S Huang.
+        \textit{Age synthesis and estimation via faces: A survey}.
+        IEEE Trans. on Pattern Analysis and Machine Intelligence 32(11):1955–1976, 2010.
+    }
+    \bibitem{mtcnn}{
+        Kaipeng Zhang, Zhanpeng Zhang, Zhifeng Li, Yu Qiao.
+        \textit{Joint Face Detection and Alignment using Multi-task Cascaded Convolutional Networks}.
+        IEEE Signal Processing Letters 23(10):1499–1503, 2016.
+    }
+    \bibitem{random_erasing}{
+        Zhun Zhong, Liang Zheng, Guoliang Kang, Shaozi Li, and Yi Yang.
+        \textit{Random erasing data augmentation}.
+        arXiv preprint arXiv:1708.04896, 2017.
+    }
 
-	\bibitem{wiki}{
-		Rasmus Rothe and Radu Timofte and Luc Van Gool.
-		\textit{Deep expectation of real and apparent age from a single image without facial landmarks}.
-		IJCV 126(2-4):144–157, 2016.
-	}
-	\bibitem{fgnet}{
-		Yun Fu, Guodong Guo, and Thomas S Huang.
-		\textit{Age synthesis and estimation via faces: A survey}.
-		IEEE Trans. on Pattern Analysis and Machine Intelligence 32(11):1955–1976, 2010.
-	}
-	\bibitem{mtcnn}{
-		Kaipeng Zhang, Zhanpeng Zhang, Zhifeng Li, Yu Qiao.
-		\textit{Joint Face Detection and Alignment using Multi-task Cascaded Convolutional Networks}.
-		IEEE Signal Processing Letters 23(10):1499–1503, 2016.
-	}
-  \bibitem{random_erasing}{
-    Zhun Zhong, Liang Zheng, Guoliang Kang, Shaozi Li, and Yi Yang.
-    \textit{Random erasing data augmentation}.
-    arXiv preprint arXiv:1708.04896, 2017.
-  }
-  
 \end{thebibliography}
 
 

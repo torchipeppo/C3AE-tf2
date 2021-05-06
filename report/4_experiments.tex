@@ -189,3 +189,30 @@ returned by the "no cascade" model.
   }
   \caption{Ablation Study MAE}
 \end{figure}
+
+
+\begin{table}
+  \begin{tabular}{||c | c c c c | c c||}
+  \hline
+  Section & Model & Dataset & Augm. & Epochs & Valid. MAE & Test MAE\\ [1ex]
+  \hline\hline
+  \hyperref[subsec:first]{First} & Full & Wiki & Some & 400 & 6.82 & 22.72 \\ [1ex]
+  \hline
+  \hyperref[subsec:wiki]{Wiki} & Full & Wiki & \checked & 100 & 6.79 & 18.11 \\ [1ex]
+  \hline
+  \hyperref[subsec:utk]{UTK} & Full & UTK & \checked & 100 & 8.67 & 9.79 \\ [1ex]
+  \hline
+  \hyperref[subsec:wikiutk]{Wiki+UTK} & Full & Wiki+UTK & \checked & 100+100 & 8.23 & 8.64 \\ [1ex]
+  \Xhline{2\arrayrulewidth}
+  \hyperref[subsec:no_augmentation]{No augm.} & Full & Wiki & × & 100 & 8.36 & 24.41 \\ [1ex]
+  \hline
+  \hyperref[subsec:no_context]{No context} & No context & Wiki & \checked & 100 & 6.88 & 20.73 \\ [1ex]
+  \hline
+  \hyperref[subsec:no_cascade]{No cascade} & No cascade & Wiki & \checked & 100 & 12.60 & 18.67 \\ [1ex]
+  \hline
+  \hyperref[subsec:full_ablation]{Full ablation} & Full ablation & Wiki & \checked & 100 & 12.60 & 18.69 \\ [1ex]
+  \hline
+  \end{tabular}
+  \caption{Recap table of experiment parameters and results}
+  \label{tab:big_table}
+\end{table}
