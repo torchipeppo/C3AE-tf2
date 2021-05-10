@@ -112,7 +112,7 @@ In the last part of the file we organized the code so that we could be able to r
 studies conducted in the original C3AE paper. Ablation studies are procedure where certain parts of the 
 network are removed, in order to gain a better understanding of the network’s behaviour. In our case, 
 the two ablations affect the presence or the absence of the cascade module and the context module.
-The \texttt{model.py} file therefore gives us the possibility to analize not only the full context 
+The \texttt{model.py} file therefore gives us the possibility to analyze not only the full context 
 model, but also compare it with three slightly simpler ones: the model without cascade, without context 
 and without both.
 
@@ -125,7 +125,7 @@ The presence of these alternative versions required some changes in the code:
     \item \textit{Cascade ablation}: in this case we lose the concept of two-point age representation.
     We replace the last dense layer W1 with a hidden layer with no particular meaning and then only
     considered one output, the age prediction, and ignore the second output, the age distribution.
-    It follows thatin the training phase we will only evaluate the MAE loss in this case, since the KL 
+    It follows that in the training phase we will only evaluate the MAE loss in this case, since the KL 
     divergence loss will no longer be present. 
     \item \textit{Full ablation}: both of the above modifications apply.
 \end{itemize}

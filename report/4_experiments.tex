@@ -23,7 +23,7 @@ An initial experiment was performed by training the C3AE model for
 and the functioning of the implemented C3AE model within it.
 
 The evolution of training and validation loss is shown in \autoref{fig:400_loss}.
-The experiment ran to completition with no runtime errors, and
+The experiment ran to completion with no runtime errors, and
 it can be observed that the model was able to decrease its loss,
 and that such loss reached an asymptote around epoch 50.
 
@@ -155,7 +155,7 @@ is useful to the full model performance.
 
 When we take out the cascade module we the only metric that contributes to the total loss is
 the MAE, since we lose the output with the age distribution and also the KLD loss.
-The direct exstimation of an age from the image in input is quite a harder task, judging
+The direct estimation of an age from the image in input is quite a harder task, judging
 by the results of this experiment.
 The validation MAE is by far the highest found so far, at 12.6 years, and the test MAE on FGNET 
 isn't great either, reaching 18.67. Once again, we can interpret this performance drop as a 
