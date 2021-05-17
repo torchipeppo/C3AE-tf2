@@ -48,8 +48,9 @@ def sp_main(image_path, model_path, silent=False, seed=14383421):
     image = np.frombuffer(pseudo_row.image, np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     crop_boxes = pickle.loads(pseudo_row.crop_boxes, encoding="bytes")
+    min_size = min(image.shape[0], image.shape[1])
     for i in range(3):
-        print(crop_boxes)
+        # print(crop_boxes)
         pt1 = crop_boxes[i][0]
         pt2 = crop_boxes[i][1]
         x1,y1=pt1
@@ -62,13 +63,27 @@ def sp_main(image_path, model_path, silent=False, seed=14383421):
             color=(0,255,0)
         else:
             color=(255,0,0)
-        thickness = 2
+        thickness = max(2, int(0.005*min_size))
         image = cv2.rectangle(image, pt1, pt2, color, thickness)
     
     age = int(np.round(age.numpy()[0]))
     
-    image = cv2.putText(image, str(age), (30,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,0), 3)
+    font_scale = max(1, int(0.0025*min_size))
+    font_thickness = max(3, int(0.005*min_size))
+    text_offset = min(30, int(0.025*min_size))
+    text_size, _ = cv2.getTextSize(str(age), cv2.FONT_HERSHEY_SIMPLEX, font_scale, font_thickness)
+    _, text_height = text_size
 
-    print(age)
-    print(distr)
+    image = cv2.putText(
+        image, 
+        str(age), 
+        (text_offset, text_offset+text_height), 
+        cv2.FONT_HERSHEY_SIMPLEX, 
+        font_scale,
+        (0,0,0), 
+        font_thickness
+    )
+
+    # print(age)
+    # print(distr)
     cv2.imwrite(image_path+".squares.jpg", image)
